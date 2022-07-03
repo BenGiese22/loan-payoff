@@ -19,14 +19,29 @@ describe("Calculator", () => {
         expect(result).toBe(38)
     })
 
+    test("Get number of months until loan is paid off - my example", () => {
+        let result = calculator.getMonthsUntilLoanIsPaidOff(59875, 1495, 0.031)
+        expect(result).toBe(42)
+    })
+
     test("Get remaining balance on loan", () => {
         let result = calculator.getRemainingBalanceOnLoan(10000, 300, 0.08, 5)
-        expect(result).toBe(12933)
+        expect(result).toBe(8818)
+    })
+
+    test("Get remaining balance on loan - my example", () => {
+        let result = calculator.getRemainingBalanceOnLoan(59875, 1495, 0.031, 5)
+        expect(result).toBe(53139)
     })
 
     test("Get MonthBreakdown of loan", () => {
         let monthBreakdownResult = calculator.getBreakdownOfLoanPayment(1000, 300, 0.08)
-        expect(monthBreakdownResult).toHaveLength(6)
+        expect(monthBreakdownResult).toHaveLength(5)
+    })
+
+    test("Get MonthBreakdown of loan - my example", () => {
+        let monthBreakdownResult = calculator.getBreakdownOfLoanPayment(59875, 1495, 0.031)
+        expect(monthBreakdownResult).toHaveLength(44)
     })
 
 })
