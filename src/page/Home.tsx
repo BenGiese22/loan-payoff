@@ -78,6 +78,7 @@ const Home = () => {
                 <Stack direction="row" spacing={2}>
                     <Grid item xs={2}>
                         <InputLoanDetail
+                            showGraph={showGraph}
                             showGraphButtonText={showGraphButtonText}
                             sendDataToParent={handleInputLoanDetailData}
                         />
