@@ -33,6 +33,7 @@ const Home = () => {
 
     const [data, setData] = useState([] as any)
     const [showGraph, setShowGraph] = useState(false)
+    const [showGraphButtonText, setShowGraphButtonText] = useState("Show Graph")
     const [loanAmount, setLoanAmount] = useState('15000')
     const [monthlyPayment, setMonthlyPayment] = useState('1500')
     const [interestRate, setInterestRate] = useState('0.10')
@@ -45,15 +46,21 @@ const Home = () => {
     // }, [])
 
     const handleButtonClick = () => {
-        let calculator = new Calculator()
-        const monthBreakdown = calculator.getBreakdownOfLoanPaymentWithAdditionalPayment(
-            Number(loanAmount),
-            Number(monthlyPayment),
-            Number(interestRate),
-            Number(500)
-        )
-        setData(monthBreakdown)
-        setShowGraph(true)
+        if (!showGraph) {
+            let calculator = new Calculator()
+            const monthBreakdown = calculator.getBreakdownOfLoanPaymentWithAdditionalPayment(
+                Number(loanAmount),
+                Number(monthlyPayment),
+                Number(interestRate),
+                Number(additionalPayment)
+            )
+            setData(monthBreakdown)
+            setShowGraphButtonText("Hide Graph")
+            setShowGraph(!showGraph)
+        } else {
+            setShowGraphButtonText("Show Graph")
+            setShowGraph(!showGraph)
+        }
     }
 
     // const yAxisFormatter = (value: any) => {
@@ -112,7 +119,7 @@ const Home = () => {
                                 value={additionalPayment}
                             />
                             <Button variant="contained" color="primary" onClick={handleButtonClick}>
-                                Show Graph
+                                {showGraphButtonText}
                             </Button>
                         </Stack>
                     </Grid>
