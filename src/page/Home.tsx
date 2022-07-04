@@ -3,6 +3,8 @@ import { Grid, Stack, Typography, InputAdornment, TextField, Button } from "@mui
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts'
 import Calculator from "../service/calculator"
 import CustomizedYAxisTick from "../component/CustomizedYAxisTick"
+import InputLoanDetail from "../component/InputLoanDetail"
+import Loan from "../type/Loan"
 
 const styles = {
     title: {
@@ -34,10 +36,6 @@ const Home = () => {
     const [data, setData] = useState([] as any)
     const [showGraph, setShowGraph] = useState(false)
     const [showGraphButtonText, setShowGraphButtonText] = useState("Show Graph")
-    const [loanAmount, setLoanAmount] = useState('15000')
-    const [monthlyPayment, setMonthlyPayment] = useState('1500')
-    const [interestRate, setInterestRate] = useState('0.10')
-    const [additionalPayment, setAdditionalPayment] = useState('500')
 
 
     // useEffect(() => {
@@ -45,14 +43,16 @@ const Home = () => {
 
     // }, [])
 
-    const handleButtonClick = () => {
+
+    const handleInputLoanDetailData = (data: Loan) => {
+        console.log(data)
         if (!showGraph) {
             let calculator = new Calculator()
             const monthBreakdown = calculator.getBreakdownOfLoanPaymentWithAdditionalPayment(
-                Number(loanAmount),
-                Number(monthlyPayment),
-                Number(interestRate),
-                Number(additionalPayment)
+                data.loanAmount,
+                data.monthlyPayment,
+                data.interestRate,
+                data.additionalPayment
             )
             setData(monthBreakdown)
             setShowGraphButtonText("Hide Graph")
@@ -76,54 +76,13 @@ const Home = () => {
             </Grid>
             <Grid item style={styles.inputRow}>
                 <Stack direction="row" spacing={2}>
-                    <Grid item xs={3}>
-                        <Stack direction="column" spacing={2}>
-                            <TextField
-                                id="loan-amount"
-                                label="Loan Amount"
-                                variant="standard"
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                                }}
-                                onChange={(e) => setLoanAmount(e.target.value)}
-                                value={loanAmount}
-                            />
-                            <TextField
-                                id="monthly-payment"
-                                label="Monthly Payment"
-                                variant="standard"
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                                }}
-                                onChange={(e) => setMonthlyPayment(e.target.value)}
-                                value={monthlyPayment}
-                            />
-                            <TextField
-                                id="interest-rate"
-                                label="Interest Rate (%)"
-                                variant="standard"
-                                InputProps={{
-                                    endAdornment: <InputAdornment position="end">%</InputAdornment>,
-                                }}
-                                onChange={(e) => setInterestRate(e.target.value)}
-                                value={interestRate}
-                            />
-                            <TextField
-                                id="additional-payment"
-                                label="Additional Payment"
-                                variant="standard"
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                                }}
-                                onChange={(e) => setAdditionalPayment(e.target.value)}
-                                value={additionalPayment}
-                            />
-                            <Button variant="contained" color="primary" onClick={handleButtonClick}>
-                                {showGraphButtonText}
-                            </Button>
-                        </Stack>
+                    <Grid item xs={2}>
+                        <InputLoanDetail
+                            showGraphButtonText={showGraphButtonText}
+                            sendDataToParent={handleInputLoanDetailData}
+                        />
                     </Grid>
-                    <Grid item xs={9}>
+                    <Grid item xs={10}>
                         {showGraph === true &&
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart
