@@ -1,11 +1,15 @@
 import { useState } from "react"
 import { Grid, Stack, Typography, InputAdornment, TextField, Button } from "@mui/material"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts'
 import Calculator from "../service/calculator"
+import CustomizedYAxisTick from "../component/CustomizedYAxisTick"
 
 const styles = {
     title: {
         paddingTop: "32px"
+    },
+    inputRow: {
+        width: "50vw"
     }
 }
 
@@ -28,7 +32,7 @@ const Home = () => {
 
 
     const [data, setData] = useState([] as any)
-    const [hasData, setHasData] = useState(false)
+    const [showGraph, setShowGraph] = useState(false)
     const [loanAmount, setLoanAmount] = useState('15000')
     const [monthlyPayment, setMonthlyPayment] = useState('1500')
     const [interestRate, setInterestRate] = useState('0.10')
@@ -49,7 +53,7 @@ const Home = () => {
             Number(500)
         )
         setData(monthBreakdown)
-        setHasData(true)
+        setShowGraph(true)
     }
 
     // const yAxisFormatter = (value: any) => {
@@ -63,7 +67,7 @@ const Home = () => {
                     Accelerated Loan Contribution Calculator
                 </Typography>
             </Grid>
-            <Grid item style={{width: '40vw'}}>
+            <Grid item style={styles.inputRow}>
                 <Stack direction="row" spacing={2}>
                     <Grid item xs={3}>
                         <Stack direction="column" spacing={2}>
@@ -113,26 +117,30 @@ const Home = () => {
                         </Stack>
                     </Grid>
                     <Grid item xs={9}>
-                        {hasData === true &&
-                            <LineChart
-                                width={600}
-                                height={400}
-                                data={data}
-                                margin={{
-                                    top: 5,
-                                    right: 30,
-                                    left: 20,
-                                    bottom: 5,
-                                }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" label={"Months"} />
-                                <YAxis type={"number"} />
-                                <Tooltip />
-                                <Legend />
-                                <Line type="monotone" dataKey="remainingBalance" stroke="#8884d8" activeDot={{ r: 8 }} />
-                                <Line type="monotone" dataKey="additionalPaymentRemainingBalance" stroke="#82ca9d" activeDot={{ r: 8 }} />
-                            </LineChart>
+                        {showGraph === true &&
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart
+                                    width={600}
+                                    height={600}
+                                    data={data}
+                                    margin={{
+                                        top: 5,
+                                        right: 30,
+                                        left: 20,
+                                        bottom: 20,
+                                    }}
+                                >
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" >
+                                        <Label value="Month(s)" position="bottom" offset={0} />
+                                    </XAxis>
+                                    <YAxis type={"number"} tick={<CustomizedYAxisTick />} />
+                                    <Tooltip />
+                                    <Legend verticalAlign="top" height={36} />
+                                    <Line name="Minimum Payments" type="monotone" dataKey="remainingBalance" stroke="#8884d8" activeDot={{ r: 8 }} />
+                                    <Line name="w/ Additional Payments" type="monotone" dataKey="additionalPaymentRemainingBalance" stroke="#82ca9d" activeDot={{ r: 8 }} />
+                                </LineChart>
+                            </ResponsiveContainer>
                         }
                     </Grid>
                 </Stack>
