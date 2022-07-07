@@ -11,8 +11,9 @@ class Calculator {
     }
 
     getRemainingBalanceOnLoan(principalAmount: number, monthlyPayment: number, monthlyInterestRate: number, numberOfPayments: number): number {
-        const front = principalAmount * Math.pow(1 + (monthlyInterestRate / 12), numberOfPayments)
-        const back = (monthlyPayment * (Math.pow(1 + (monthlyInterestRate / 12), numberOfPayments) - 1)) / (monthlyInterestRate / 12)
+        const plusAnnualInterestRate = 1 + monthlyInterestRate / 12
+        const front = principalAmount * Math.pow(plusAnnualInterestRate, numberOfPayments)
+        const back = (monthlyPayment * (Math.pow(plusAnnualInterestRate, numberOfPayments) - 1)) / (monthlyInterestRate / 12)
         return Math.round(front - back)
     }
 

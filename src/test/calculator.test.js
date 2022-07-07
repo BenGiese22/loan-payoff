@@ -44,4 +44,8 @@ describe("Calculator", () => {
         expect(monthBreakdownResult).toHaveLength(44)
     })
 
+    test("Get MonthBreakdown of loan - large example", () => {
+        let monthBreakdownResult = calculator.getBreakdownOfLoanPayment(167371.45, 1199.10, 0.06)
+        expect(monthBreakdownResult).toHaveLength(241)
+    })
 })

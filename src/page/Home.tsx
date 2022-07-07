@@ -102,10 +102,10 @@ const Home = () => {
                                         <Label value="Month(s)" position="bottom" offset={0} />
                                     </XAxis>
                                     <YAxis type={"number"} tick={<CustomizedYAxisTick />} />
-                                    <Tooltip />
+                                    {/* <Tooltip /> */}
                                     <Legend verticalAlign="top" height={36} />
-                                    <Line name="Minimum Payments" type="monotone" dataKey="remainingBalance" stroke="#8884d8" activeDot={{ r: 8 }} />
-                                    <Line name="w/ Additional Payments" type="monotone" dataKey="additionalPaymentRemainingBalance" stroke="#82ca9d" activeDot={{ r: 8 }} />
+                                    <Line name="Minimum Payments" type="monotone" dataKey="remainingBalance" stroke="#8884d8" dot={false}/>
+                                    <Line name="w/ Additional Payments" type="monotone" dataKey="additionalPaymentRemainingBalance" stroke="#82ca9d" dot={false}/>
                                 </LineChart>
                             </ResponsiveContainer>
                         }
