@@ -36,6 +36,7 @@ describe("Calculator", () => {
 
     test("Get MonthBreakdown of loan", () => {
         let monthBreakdownResult = calculator.getBreakdownOfLoanPayment(1000, 300, 0.08)
+        console.log(monthBreakdownResult)
         expect(monthBreakdownResult).toHaveLength(5)
     })
 
