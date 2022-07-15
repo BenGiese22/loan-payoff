@@ -77,7 +77,10 @@ const Home = () => {
                                     <XAxis dataKey="name" tick={<CustomizedXAxisTick />} >
                                     </XAxis>
                                     <YAxis type={"number"} tick={<CustomizedYAxisTick />} />
-                                    <Tooltip content={<CustomizedTooltip  strokeMonthly={"#8884d8"} strokeAdditional={"#82ca9d"} />} wrapperStyle={{ backgroundColor: "white", borderStyle: "ridge", paddingLeft: "10px", paddingRight: "10px" }}/>
+                                    <Tooltip 
+                                        content={<CustomizedTooltip  strokeMonthly={"#8884d8"} strokeAdditional={"#82ca9d"} />} 
+                                        wrapperStyle={{ backgroundColor: "white", borderStyle: "ridge", paddingLeft: "10px", paddingRight: "10px" }}
+                                    />
                                     <Legend verticalAlign="top" height={36} />
                                     <Line name="Minimum Payments" type="monotone" dataKey="remainingBalance" stroke="#8884d8" activeDot={{ r: 8 }}/>
                                     <Line name="w/ Additional Payments" type="monotone" dataKey="additionalPaymentRemainingBalance" stroke="#82ca9d" activeDot={{ r: 8 }}/>
