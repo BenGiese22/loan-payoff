@@ -17,34 +17,11 @@ const styles = {
     }
 }
 
-// const data = [
-//     {
-//         name: 'Page A',
-//         uv: 4000,
-//         pv: 2400,
-//         amt: 2400,
-//     },
-
-
 const Home = () => {
-
-    // const runCalc = () => {
-    //     let calculator = new Calculator()
-    //     const monthBreakdown = calculator.getBreakdownOfLoanPayment(1000, 300, 0.08)
-    //     return monthBreakdown
-    // }
-
 
     const [data, setData] = useState([] as any)
     const [showGraph, setShowGraph] = useState(false)
     const [showGraphButtonText, setShowGraphButtonText] = useState("Show Graph")
-
-
-    // useEffect(() => {
-    //     const monthBreakdown = runCalc()
-
-    // }, [])
-
 
     const handleInputLoanDetailData = (data: Loan) => {
         console.log(data)
@@ -65,10 +42,6 @@ const Home = () => {
             setShowGraph(!showGraph)
         }
     }
-
-    // const yAxisFormatter = (value: any) => {
-    //     return `${value}`
-    // }
 
     return (
         <Grid container spacing={2} direction="column" alignItems="center" justifyContent="center">
@@ -102,10 +75,9 @@ const Home = () => {
                                 >
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="name" tick={<CustomizedXAxisTick />} >
-                                        {/* <Label value="Month(s)" position="bottom" offset={0} /> */}
                                     </XAxis>
                                     <YAxis type={"number"} tick={<CustomizedYAxisTick />} />
-                                    <Tooltip content={<CustomizedTooltip />} wrapperStyle={{ backgroundColor: "white", borderStyle: "ridge", paddingLeft: "10px", paddingRight: "10px" }}/>
+                                    <Tooltip content={<CustomizedTooltip  strokeMonthly={"#8884d8"} strokeAdditional={"#82ca9d"} />} wrapperStyle={{ backgroundColor: "white", borderStyle: "ridge", paddingLeft: "10px", paddingRight: "10px" }}/>
                                     <Legend verticalAlign="top" height={36} />
                                     <Line name="Minimum Payments" type="monotone" dataKey="remainingBalance" stroke="#8884d8" activeDot={{ r: 8 }}/>
                                     <Line name="w/ Additional Payments" type="monotone" dataKey="additionalPaymentRemainingBalance" stroke="#82ca9d" activeDot={{ r: 8 }}/>
