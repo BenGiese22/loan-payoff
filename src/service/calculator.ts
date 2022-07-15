@@ -28,7 +28,7 @@ class Calculator {
             if (remainingBalance < 0) {
                 remainingBalance = 0
             }
-            monthBreakdown.push({ name: String(futureDate.toISOString().split('T')[0]), remainingBalance: remainingBalance })
+            monthBreakdown.push(this.buildMonthBreakdownInstance(futureDate, remainingBalance, undefined))
             monthCounter += 1
         } while (remainingBalance > 0)
         return monthBreakdown
@@ -53,9 +53,9 @@ class Calculator {
                 if (additionalPaymentRemainingBalance < 0) {
                     additionalPaymentRemainingBalance = 0
                 }
-                monthBreakdown.push({ name: String(futureDate.toISOString().split('T')[0]), remainingBalance: remainingBalance, additionalPaymentRemainingBalance: additionalPaymentRemainingBalance })
+                monthBreakdown.push(this.buildMonthBreakdownInstance(futureDate, remainingBalance, additionalPaymentRemainingBalance))
             } else {
-                monthBreakdown.push({ name: String(futureDate.toISOString().split('T')[0]), remainingBalance: remainingBalance })
+                monthBreakdown.push(this.buildMonthBreakdownInstance(futureDate, remainingBalance, undefined))
             }
 
             monthCounter += 1
@@ -68,6 +68,14 @@ class Calculator {
         const newDate = new Date(date)
         newDate.setMonth(newDate.getMonth() + months)
         return newDate
+    }
+
+    buildMonthBreakdownInstance( futureDate: Date, remainingBalance: number, additionalPaymentRemainingBalance: any ): object {
+        return {
+            name: String(futureDate.toISOString().split('T')[0].replace(/-/g, '/')),
+            remainingBalance: remainingBalance,
+            ...(additionalPaymentRemainingBalance !== undefined && { additionalPaymentRemainingBalance: additionalPaymentRemainingBalance })
+        }
     }
 }
 
