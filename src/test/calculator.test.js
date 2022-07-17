@@ -49,4 +49,35 @@ describe("Calculator", () => {
         let monthBreakdownResult = calculator.getBreakdownOfLoanPayment(167371.45, 1199.10, 0.06)
         expect(monthBreakdownResult).toHaveLength(241)
     })
+
+    test("Process Payment Contributions", () => {
+        let paymentContributions = [
+            { 
+                payment: { paymentName: 'standard', paymentAmount: 300 },
+                remainingBalance: 707,
+                futureDate: new Date('2022-07-01')
+            },
+            { 
+                payment: { paymentName: 'additional1', paymentAmount: 1000 },
+                remainingBalance: 0,
+                futureDate: new Date('2022-07-01')
+            }
+        ]
+        let results = calculator.processPaymentContributions(1000, 0.08, 1, paymentContributions)
+        expect(results).toBeInstanceOf(Object)
+        let paymentBreakdowns = results.paymentBreakdowns
+        expect(paymentBreakdowns).toHaveLength(1)
+    })
+
+    test("Get MonthBreakdown of loan - 2 Additional Payments", () => {
+        let paymentContributions = [
+            { paymentName: 'standard', paymentAmount: 300 },
+            { paymentName: 'additional0', paymentAmount: 500 },
+            { paymentName: 'additional1', paymentAmount: 1000 }
+        ]
+        let results = calculator.getBreakdownOfLoanPaymentWithAdditionalPayments(1000, 0.08, paymentContributions)
+        expect(results).toBeInstanceOf(Object)
+        let monthPaymentBreakdowns = results.monthPaymentBreakdowns
+        expect(monthPaymentBreakdowns).toHaveLength(5)
+    })
 })
