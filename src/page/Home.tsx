@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { Grid, Stack, Typography, InputAdornment, TextField, Button } from "@mui/material"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts'
+import { Grid, Stack, Typography } from "@mui/material"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import Calculator from "../service/calculator"
 import CustomizedYAxisTick from "../component/CustomizedYAxisTick"
 import InputLoanDetail from "../component/InputLoanDetail"
@@ -27,14 +27,26 @@ const Home = () => {
         console.log(data)
         if (!showGraph) {
             let calculator = new Calculator()
-            const monthBreakdown = calculator.getBreakdownOfLoanPaymentWithAdditionalPayment(
+            const resultObj = calculator.getBreakdownOfLoanPaymentWithAdditionalPayments(
                 data.loanAmount,
-                data.monthlyPayment,
                 data.interestRate,
-                data.additionalPayment
+                [
+                    { 
+                        paymentName: 'standard',
+                        paymentAmount: data.monthlyPayment
+                    },
+                    {
+                        paymentName: 'additional',
+                        paymentAmount: data.additionalPayment 
+                    }
+                ]
+
             )
-            console.log(monthBreakdown)
-            setData(monthBreakdown)
+            console.log(resultObj)
+            let monthPaymentBreakdowns = resultObj.monthPaymentBreakdowns
+            let finalPaymentDates = resultObj.finalPaymentDates
+            console.log(finalPaymentDates)
+            setData(monthPaymentBreakdowns)
             setShowGraphButtonText("Hide Graph")
             setShowGraph(!showGraph)
         } else {
