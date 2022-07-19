@@ -45,7 +45,9 @@ const Home = () => {
             console.log(resultObj)
             let monthPaymentBreakdowns = resultObj.monthPaymentBreakdowns
             let finalPaymentDates = resultObj.finalPaymentDates
-            console.log(finalPaymentDates)
+            // console.log(finalPaymentDates)
+
+            // processedMonthPaymentData = processData(monthPaymentBreakdowns)
             setData(monthPaymentBreakdowns)
             setShowGraphButtonText("Hide Graph")
             setShowGraph(!showGraph)
@@ -53,6 +55,24 @@ const Home = () => {
             setShowGraphButtonText("Show Graph")
             setShowGraph(!showGraph)
         }
+    }
+
+    const processData = (data: Array<any>) => {
+        let result = []
+        data.forEach((item: any) => {
+            var dataObjInst: any = {}
+            dataObjInst.forEach((subitem: any) => {
+                dataObjInst[subitem.name] = subitem.remainingBalance
+            })
+            console.log(item)
+            result.push({
+                name: item.futureDate,
+                standard: item.standard,
+                additional: item.additional
+            })
+        }
+        )
+        return result
     }
 
     return (
@@ -94,8 +114,8 @@ const Home = () => {
                                         wrapperStyle={{ backgroundColor: "white", borderStyle: "ridge", paddingLeft: "10px", paddingRight: "10px" }}
                                     />
                                     <Legend verticalAlign="top" height={36} />
-                                    <Line name="Minimum Payments" type="monotone" dataKey="remainingBalance" stroke="#8884d8" activeDot={{ r: 8 }}/>
-                                    <Line name="w/ Additional Payments" type="monotone" dataKey="additionalPaymentRemainingBalance" stroke="#82ca9d" activeDot={{ r: 8 }}/>
+                                    <Line name="standard" type="monotone" dataKey="remainingBalance" stroke="#8884d8" activeDot={{ r: 8 }}/>
+                                    <Line name="additional" type="monotone" dataKey="additional" stroke="#82ca9d" activeDot={{ r: 8 }}/>
                                 </LineChart>
                             </ResponsiveContainer>
                         }

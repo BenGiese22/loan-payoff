@@ -1,4 +1,5 @@
-import Calculator from "../service/calculator";
+import Calculator from "../service/calculator"
+import DateUtil from "../util/dateUtil"
 
 
 describe("Calculator", () => {
@@ -51,31 +52,37 @@ describe("Calculator", () => {
     })
 
     test("Process Payment Contributions", () => {
-        let paymentContributions = [
-            { 
-                payment: { paymentName: 'standard', paymentAmount: 300 },
-                remainingBalance: 707,
-                futureDate: new Date('2022-07-01')
-            },
-            { 
-                payment: { paymentName: 'additional1', paymentAmount: 1000 },
-                remainingBalance: 0,
-                futureDate: new Date('2022-07-01')
-            }
-        ]
-        let results = calculator.processPaymentContributions(1000, 0.08, 1, paymentContributions)
+
+        let paymentLookUp = {
+            standard: 300,
+            additional0: 1000,
+        }
+
+        let previousPaymentBreakdown = {
+            date: "2020-01-01",
+            standardRemainingBalance: 1000,
+            additional0RemainingBalance: 1000,
+        }
+        let results = calculator.processPaymentContributions(1000, 0.08, 1, paymentLookUp, previousPaymentBreakdown)
         expect(results).toBeInstanceOf(Object)
-        let paymentBreakdowns = results.paymentBreakdowns
-        expect(paymentBreakdowns).toHaveLength(1)
+        let paymentBreakdown = results.paymentBreakdown
+        expect(paymentBreakdown).toBeInstanceOf(Object)
+        expect(paymentBreakdown['date']).toBe(DateUtil.toISOString(calculator.addMonthsToDate(new Date(), 1)))
+        expect(paymentBreakdown['standardRemainingBalance']).toBe(707)
     })
 
     test("Get MonthBreakdown of loan - 2 Additional Payments", () => {
-        let paymentContributions = [
-            { paymentName: 'standard', paymentAmount: 300 },
-            { paymentName: 'additional0', paymentAmount: 500 },
-            { paymentName: 'additional1', paymentAmount: 1000 }
-        ]
-        let results = calculator.getBreakdownOfLoanPaymentWithAdditionalPayments(1000, 0.08, paymentContributions)
+        // let paymentContributions = [
+        //     { paymentName: 'standard', paymentAmount: 300 },
+        //     { paymentName: 'additional0', paymentAmount: 500 },
+        //     { paymentName: 'additional1', paymentAmount: 1000 }
+        // ]
+        let paymentLookUp = {
+            standard: 300,
+            additional0: 500,
+            additional1: 1000
+        }
+        let results = calculator.getBreakdownOfLoanPaymentWithAdditionalPayments(1000, 0.08, paymentLookUp)
         expect(results).toBeInstanceOf(Object)
         let monthPaymentBreakdowns = results.monthPaymentBreakdowns
         expect(monthPaymentBreakdowns).toHaveLength(5)
