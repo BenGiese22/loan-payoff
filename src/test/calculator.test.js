@@ -52,7 +52,6 @@ describe("Calculator", () => {
     })
 
     test("Process Payment Contributions", () => {
-
         let paymentLookUp = {
             standard: 300,
             additional0: 1000,
@@ -72,11 +71,6 @@ describe("Calculator", () => {
     })
 
     test("Get MonthBreakdown of loan - 2 Additional Payments", () => {
-        // let paymentContributions = [
-        //     { paymentName: 'standard', paymentAmount: 300 },
-        //     { paymentName: 'additional0', paymentAmount: 500 },
-        //     { paymentName: 'additional1', paymentAmount: 1000 }
-        // ]
         let paymentLookUp = {
             standard: 300,
             additional0: 500,

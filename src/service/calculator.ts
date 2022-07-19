@@ -91,9 +91,11 @@ class Calculator {
     getBreakdownOfLoanPaymentWithAdditionalPayments(principalAmount: number, monthlyInterestRate: number, paymentLookUp: Object): any {
 
         // Create the first Month Breakdown
-        let firstMonthBreakdown: any = {}
+        let firstMonthBreakdown: any = {
+            date: DateUtil.toISOString(new Date())
+        }
         Object.keys(paymentLookUp).forEach((key: string | number) => {
-            firstMonthBreakdown[key] = principalAmount
+            firstMonthBreakdown[`${key}RemainingBalance`] = principalAmount
         })
 
         var monthPaymentBreakdowns = [firstMonthBreakdown]
@@ -118,12 +120,16 @@ class Calculator {
             */
 
             // Check for Final Payment Date
-            if (results.finalPaymentDate !== undefined) {
-                Object.keys(paymentBreakdown).forEach((key: string | number) => {
-                    if (key !== "date" && paymentBreakdown[key] === 0) {
-                        finalPaymentDates[key] = paymentBreakdown["date"]
-                    }
+            let finalPaymentDate = results.finalPaymentDates
+            if (finalPaymentDate !== undefined) {
+                Object.keys(finalPaymentDate).forEach((key: string | number) => {
+                    finalPaymentDates[key] = finalPaymentDate[key]
                 })
+                // Object.keys(paymentBreakdown).forEach((key: string | number) => {
+                //     if (key !== "date" && paymentBreakdown[key] === 0) {
+                //         finalPaymentDates[key] = paymentBreakdown["date"]
+                //     }
+                // })
             }
 
             // Check if we have to continue iterating (we check for if we need to keep going later on)
@@ -169,7 +175,7 @@ class Calculator {
                 }
             }
         })
-        return { paymentBreakdown: paymentBreakdown }
+        return { paymentBreakdown: paymentBreakdown, finalPaymentDates: finalPaymentDates }
     }
     //     // var paymentBreakdowns = []
     //     var finalPaymentDates: any = {}
