@@ -30,17 +30,10 @@ const Home = () => {
             const resultObj = calculator.getBreakdownOfLoanPaymentWithAdditionalPayments(
                 data.loanAmount,
                 data.interestRate,
-                [
-                    { 
-                        paymentName: 'standard',
-                        paymentAmount: data.monthlyPayment
-                    },
-                    {
-                        paymentName: 'additional',
-                        paymentAmount: data.additionalPayment 
-                    }
-                ]
-
+                { 
+                    'standard': data.monthlyPayment,
+                    'additional': data.additionalPayment 
+                }
             )
             console.log(resultObj)
             let monthPaymentBreakdowns = resultObj.monthPaymentBreakdowns
@@ -55,24 +48,6 @@ const Home = () => {
             setShowGraphButtonText("Show Graph")
             setShowGraph(!showGraph)
         }
-    }
-
-    const processData = (data: Array<any>) => {
-        let result = []
-        data.forEach((item: any) => {
-            var dataObjInst: any = {}
-            dataObjInst.forEach((subitem: any) => {
-                dataObjInst[subitem.name] = subitem.remainingBalance
-            })
-            console.log(item)
-            result.push({
-                name: item.futureDate,
-                standard: item.standard,
-                additional: item.additional
-            })
-        }
-        )
-        return result
     }
 
     return (
@@ -106,7 +81,7 @@ const Home = () => {
                                     }}
                                 >
                                     <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" tick={<CustomizedXAxisTick />} >
+                                    <XAxis dataKey="date" tick={<CustomizedXAxisTick />} >
                                     </XAxis>
                                     <YAxis type={"number"} tick={<CustomizedYAxisTick />} />
                                     <Tooltip 
@@ -114,8 +89,8 @@ const Home = () => {
                                         wrapperStyle={{ backgroundColor: "white", borderStyle: "ridge", paddingLeft: "10px", paddingRight: "10px" }}
                                     />
                                     <Legend verticalAlign="top" height={36} />
-                                    <Line name="standard" type="monotone" dataKey="remainingBalance" stroke="#8884d8" activeDot={{ r: 8 }}/>
-                                    <Line name="additional" type="monotone" dataKey="additional" stroke="#82ca9d" activeDot={{ r: 8 }}/>
+                                    <Line name="standard" type="monotone" dataKey="standardRemainingBalance" stroke="#8884d8" activeDot={{ r: 8 }}/>
+                                    <Line name="additional" type="monotone" dataKey="additionalRemainingBalance" stroke="#82ca9d" activeDot={{ r: 8 }}/>
                                 </LineChart>
                             </ResponsiveContainer>
                         }
