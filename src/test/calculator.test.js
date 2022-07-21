@@ -50,7 +50,7 @@ describe("Calculator", () => {
         expect(results).toBeInstanceOf(Object)
         let paymentBreakdown = results.paymentBreakdown
         expect(paymentBreakdown).toBeInstanceOf(Object)
-        expect(paymentBreakdown['date']).toBe(DateUtil.toISOString(calculator.addMonthsToDate(new Date(), 1)))
+        expect(paymentBreakdown['date']).toBe(DateUtil.toISOString(calculator._addMonthsToDate(new Date(), 1)))
         expect(paymentBreakdown['standardRemainingBalance']).toBe(707)
     })
 
