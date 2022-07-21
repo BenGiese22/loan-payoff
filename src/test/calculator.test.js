@@ -35,22 +35,6 @@ describe("Calculator", () => {
         expect(result).toBe(53139)
     })
 
-    test("Get MonthBreakdown of loan", () => {
-        let monthBreakdownResult = calculator.getBreakdownOfLoanPayment(1000, 300, 0.08)
-        console.log(monthBreakdownResult)
-        expect(monthBreakdownResult).toHaveLength(5)
-    })
-
-    test("Get MonthBreakdown of loan - my example", () => {
-        let monthBreakdownResult = calculator.getBreakdownOfLoanPayment(59875, 1495, 0.031)
-        expect(monthBreakdownResult).toHaveLength(44)
-    })
-
-    test("Get MonthBreakdown of loan - large example", () => {
-        let monthBreakdownResult = calculator.getBreakdownOfLoanPayment(167371.45, 1199.10, 0.06)
-        expect(monthBreakdownResult).toHaveLength(241)
-    })
-
     test("Process Payment Contributions", () => {
         let paymentLookUp = {
             standard: 300,
@@ -76,9 +60,39 @@ describe("Calculator", () => {
             additional0: 500,
             additional1: 1000
         }
-        let results = calculator.getBreakdownOfLoanPaymentWithAdditionalPayments(1000, 0.08, paymentLookUp)
+        let results = calculator.getBreakdownOfLoanPayments(1000, 0.08, paymentLookUp)
         expect(results).toBeInstanceOf(Object)
         let monthPaymentBreakdowns = results.monthPaymentBreakdowns
         expect(monthPaymentBreakdowns).toHaveLength(5)
+    })
+
+    test("Get MonthBreakdown of loan - No Additional Payments", () => {
+        let paymentLookUp = {
+            standard: 300
+        }
+        let results = calculator.getBreakdownOfLoanPayments(1000, 0.08, paymentLookUp)
+        expect(results).toBeInstanceOf(Object)
+        let monthPaymentBreakdowns = results.monthPaymentBreakdowns
+        expect(monthPaymentBreakdowns).toHaveLength(5)
+    })
+
+    test("Get MonthBreakdown of loan - My Example", () => {
+        let paymentLookUp = {
+            standard: 1495
+        }
+        let results = calculator.getBreakdownOfLoanPayments(59875, 0.031, paymentLookUp)
+        expect(results).toBeInstanceOf(Object)
+        let monthPaymentBreakdowns = results.monthPaymentBreakdowns
+        expect(monthPaymentBreakdowns).toHaveLength(44)
+    })
+
+    test("Get MonthBreakdown of loan - Large Example", () => {
+        let paymentLookUp = {
+            standard: 1199.10
+        }
+        let results = calculator.getBreakdownOfLoanPayments(167371.45, 0.06, paymentLookUp)
+        expect(results).toBeInstanceOf(Object)
+        let monthPaymentBreakdowns = results.monthPaymentBreakdowns
+        expect(monthPaymentBreakdowns).toHaveLength(241)
     })
 })

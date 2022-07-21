@@ -18,24 +18,13 @@ class Calculator {
         return Math.round(front - back)
     }
 
-    getBreakdownOfLoanPayment(principalAmount: number, monthlyPayment: number, monthlyInterestRate: number): object[] {
-        var currentDate = new Date()
-        let monthBreakdown = []
-        let monthCounter = 0
-        var remainingBalance = principalAmount
-        do {
-            remainingBalance = this.getRemainingBalanceOnLoan(principalAmount, monthlyPayment, monthlyInterestRate, monthCounter)
-            let futureDate = this.addMonthsToDate(currentDate, monthCounter)
-            if (remainingBalance < 0) {
-                remainingBalance = 0
-            }
-            monthBreakdown.push(this.buildMonthBreakdownInstance(futureDate, remainingBalance, undefined))
-            monthCounter += 1
-        } while (remainingBalance > 0)
-        return monthBreakdown
-    }
-
-    getBreakdownOfLoanPaymentWithAdditionalPayments(principalAmount: number, monthlyInterestRate: number, paymentLookUp: Object): any {
+    /**
+     * @param {number} principalAmount - The amount of money borrowed
+     * @param {number} monthlyInterestRate - The monthly interest rate
+     * @param {Object} paymentLookUp - An object containing the monthly payment amounts for each payment type
+     */
+    getBreakdownOfLoanPayments(principalAmount: number, monthlyInterestRate: number, paymentLookUp: Object): any {
+        // TODO should validate input.
 
         // Create the first Month Breakdown
         let firstMonthBreakdown: any = {
@@ -106,17 +95,7 @@ class Calculator {
         return newDate
     }
 
-    buildMonthBreakdownInstance( futureDate: Date, remainingBalance: number, additionalPaymentRemainingBalance: any ): object {
-        return {
-            name: DateUtil.toISOString(futureDate),
-            remainingBalance: remainingBalance,
-            ...(additionalPaymentRemainingBalance !== undefined && { additionalPaymentRemainingBalance: additionalPaymentRemainingBalance })
-        }
-    }
 }
 
 export default Calculator
-function payment(payment: any, arg1: (payment: any) => void) {
-    throw new Error('Function not implemented.')
-}
 

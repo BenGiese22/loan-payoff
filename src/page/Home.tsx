@@ -27,7 +27,7 @@ const Home = () => {
         console.log(data)
         if (!showGraph) {
             let calculator = new Calculator()
-            const resultObj = calculator.getBreakdownOfLoanPaymentWithAdditionalPayments(
+            const resultObj = calculator.getBreakdownOfLoanPayments(
                 data.loanAmount,
                 data.interestRate,
                 { 
