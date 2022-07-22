@@ -95,4 +95,52 @@ describe("Calculator", () => {
         let monthPaymentBreakdowns = results.monthPaymentBreakdowns
         expect(monthPaymentBreakdowns).toHaveLength(241)
     })
+
+    test("Get MonthBreakdown of loan - Invalid Principal Amount", () => {
+        let paymentLookUp = {
+            standard: 1199.10
+        }
+        expect(() => {
+            calculator.getBreakdownOfLoanPayments(0, 0.06, paymentLookUp)
+        }).toThrowError("Principal Amount must be greater than 0")
+    })
+
+    test("Get MonthBreakdown of loan - Invalid Monthly Interest Rate - 0.00", () => {
+        let paymentLookUp = {
+            standard: 1199.10
+        }
+        expect(() => {
+            calculator.getBreakdownOfLoanPayments(167371.45, 0.00, paymentLookUp)
+        }).toThrowError("Monthly Interest Rate must be a Decimal Amount between 0 and 1")
+    })
+
+    test("Get MonthBreakdown of loan - Invalid Monthly Interest Rate - 1.00", () => {
+        let paymentLookUp = {
+            standard: 1199.10
+        }
+        expect(() => {
+            calculator.getBreakdownOfLoanPayments(167371.45, 1.00, paymentLookUp)
+        }).toThrowError("Monthly Interest Rate must be a Decimal Amount between 0 and 1")
+    })
+
+    test("Get MonthBreakdown of loan - Invalid PaymentLookUp - Not Object", () => {
+        let paymentLookUp = 123
+        expect(() => {
+            calculator.getBreakdownOfLoanPayments(167371.45, 0.06, paymentLookUp)
+        }).toThrowError("Payment Look Up is not of type Object")
+    })
+
+    test("Get MonthBreakdown of loan - Invalid PaymentLookUp - Must have at least one key", () => {
+        let paymentLookUp = {}
+        expect(() => {
+            calculator.getBreakdownOfLoanPayments(167371.45, 0.06, paymentLookUp)
+        }).toThrowError("Payment Look Up can not be empty")
+    })
+
+    test("Get MonthBreakdown of loan - Invalid PaymentLookUp - Value not a number", () => {
+        let paymentLookUp = { standard: '1199.10' }
+        expect(() => {
+            calculator.getBreakdownOfLoanPayments(167371.45, 0.06, paymentLookUp)
+        }).toThrowError("Value '1199.10' of PaymentLookUp Key 'standard' is not a number")
+    })
 })

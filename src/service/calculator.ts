@@ -40,7 +40,9 @@ class Calculator {
      * @returns {Object} An object containing the monthly payment breakdown for each payment type and the final payment dates
      */
     getBreakdownOfLoanPayments(principalAmount: number, monthlyInterestRate: number, paymentLookUp: Object): any {
-        // TODO validate input.
+        this._validatePrincipalAmount(principalAmount)
+        this._validateMonthlyInterestRate(monthlyInterestRate)
+        this._validatePaymentLookUp(paymentLookUp)
 
         // Create the first Month Breakdown
         let firstMonthBreakdown: any = {
@@ -123,6 +125,35 @@ class Calculator {
         const newDate = new Date(date)
         newDate.setMonth(newDate.getMonth() + months)
         return newDate
+    }
+
+    _validatePrincipalAmount(principalAmount: number): void {
+        if (principalAmount <= 0) {
+            throw new Error("Principal Amount must be greater than 0")
+        }
+    }
+
+    _validateMonthlyInterestRate(monthlyInterestRate: number): void {
+        if (monthlyInterestRate <= 0 || monthlyInterestRate >= 1) {
+            throw new Error("Monthly Interest Rate must be a Decimal Amount between 0 and 1")
+        }
+    }
+
+    _validatePaymentLookUp(paymentLookUp: any): void {
+        // validate object type
+        if (typeof paymentLookUp !== "object") {
+            throw new Error("Payment Look Up is not of type Object")
+        }
+
+        if (Object.keys(paymentLookUp).length === 0) {
+            throw new Error("Payment Look Up can not be empty")
+        } 
+
+        Object.keys(paymentLookUp).forEach((key) => {
+            if (typeof paymentLookUp[key] !== "number") {
+                throw new Error(`Value '${paymentLookUp[key]}' of PaymentLookUp Key '${key}' is not a number`)
+            }
+        })
     }
 
 }
