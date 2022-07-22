@@ -140,7 +140,6 @@ class Calculator {
     }
 
     _validatePaymentLookUp(paymentLookUp: any): void {
-        // validate object type
         if (typeof paymentLookUp !== "object") {
             throw new Error("Payment Look Up is not of type Object")
         }
