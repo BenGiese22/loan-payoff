@@ -1,15 +1,29 @@
-
+import DateUtil from '../util/dateUtil'
 
 class Calculator {
     // TODO get amount of interest paid
 
-    // TODO document
+    /**
+     * @param {number} principalAmount - The amount of money borrowed
+     * @param {number} monthlyPayment - The monthly payment amount
+     * @param {number} monthlyInterestRate - The monthly interest rate
+     * 
+     * @returns {number} The number of payments that will be made
+     */
     getMonthsUntilLoanIsPaidOff(principalAmount: number, monthlyPayment: number, monthlyInterestRate: number): number {
         const annualInterestRate = monthlyInterestRate / 12
         const months = -(Math.log(1 - (principalAmount * annualInterestRate) / monthlyPayment) / Math.log(1 + annualInterestRate))
         return Math.round(months)
     }
 
+    /**
+     * @param {number} principalAmount - The amount of money borrowed
+     * @param {number} monthlyPayment - The monthly payment amount
+     * @param {number} monthlyInterestRate - The monthly interest rate
+     * @param {number} numberOfPayments - The number of payments that have been made
+     * 
+     * @returns {number} The remaining balance on the loan after the number of payments have been made
+     */
     getRemainingBalanceOnLoan(principalAmount: number, monthlyPayment: number, monthlyInterestRate: number, numberOfPayments: number): number {
         const plusAnnualInterestRate = 1 + monthlyInterestRate / 12
         const front = principalAmount * Math.pow(plusAnnualInterestRate, numberOfPayments)
@@ -17,49 +31,130 @@ class Calculator {
         return Math.round(front - back)
     }
 
-    getBreakdownOfLoanPayment(principalAmount: number, monthlyPayment: number, monthlyInterestRate: number): object[] {
-        let monthBreakdown = []
-        let monthCounter = 0
-        var remainingBalance = principalAmount
+    /**
+     * @param {number} principalAmount - The amount of money borrowed
+     * @param {number} monthlyInterestRate - The monthly interest rate
+     * @param {Object} paymentLookUp - An object containing the monthly payment amounts for each payment type
+     * 
+     * @returns {Object} An object containing the monthly payment breakdown for each payment type and the final payment dates
+     */
+    getBreakdownOfLoanPayments(principalAmount: number, monthlyInterestRate: number, paymentLookUp: Object): any {
+        this._validatePrincipalAmount(principalAmount)
+        this._validateMonthlyInterestRate(monthlyInterestRate)
+        this._validatePaymentLookUp(paymentLookUp)
+
+        // Create the first Month Breakdown
+        let firstMonthBreakdown: any = {
+            date: DateUtil.toISOString(new Date())
+        }
+        Object.keys(paymentLookUp).forEach((key: string | number) => {
+            firstMonthBreakdown[`${key}RemainingBalance`] = principalAmount
+        })
+
+        var monthPaymentBreakdowns = [firstMonthBreakdown]
+        var previousMonthBreakdown = firstMonthBreakdown
+        let monthCounter = 1
+
+        var finalPaymentDates: any = {}
+
         do {
-            remainingBalance = this.getRemainingBalanceOnLoan(principalAmount, monthlyPayment, monthlyInterestRate, monthCounter)
-            if (remainingBalance < 0) {
-                remainingBalance = 0
+            let results = this.processPaymentContributions(principalAmount, monthlyInterestRate, monthCounter, paymentLookUp, previousMonthBreakdown)
+            let paymentBreakdown = results.paymentBreakdown
+            previousMonthBreakdown = results.paymentBreakdown
+
+            // Check for Final Payment Date
+            let finalPaymentDate = results.finalPaymentDates
+            if (finalPaymentDate !== undefined) {
+                Object.keys(finalPaymentDate).forEach((key: string | number) => {
+                    finalPaymentDates[key] = finalPaymentDate[key]
+                })
             }
-            monthBreakdown.push({ name: String(monthCounter), remainingBalance: remainingBalance })
-            monthCounter += 1
-        } while (remainingBalance > 0)
-        return monthBreakdown
+
+            // Check if we have to continue iterating (we check for if we need to keep going later on)
+            if (Object.keys(paymentBreakdown).length > 1) {
+                monthPaymentBreakdowns.push(paymentBreakdown)
+                monthCounter += 1
+            }
+        } while (Object.keys(previousMonthBreakdown).length > 1)
+        return { monthPaymentBreakdowns: monthPaymentBreakdowns, finalPaymentDates: finalPaymentDates }
     }
 
-    getBreakdownOfLoanPaymentWithAdditionalPayment(principalAmount: number, monthlyPayment: number, monthlyInterestRate: number, additionalMonthlyPayment: number): object[] {
-        let monthBreakdown = []
-        let monthCounter = 0
-        var remainingBalance = principalAmount
-        var additionalPaymentRemainingBalance = principalAmount
-        var previousAdditionalPaymentRemainingBalance = undefined
-        do {
-            remainingBalance = this.getRemainingBalanceOnLoan(principalAmount, monthlyPayment, monthlyInterestRate, monthCounter)
-            additionalPaymentRemainingBalance = this.getRemainingBalanceOnLoan(principalAmount, monthlyPayment + additionalMonthlyPayment, monthlyInterestRate, monthCounter)
-            if (remainingBalance < 0) {
-                remainingBalance = 0
-            }
+    /**
+     * @param {number} principalAmount - The amount of money borrowed
+     * @param {number} monthlyInterestRate - The monthly interest rate
+     * @param {number} monthCounter - The number of payments that have been made
+     * @param {Object} paymentLookUp - An object containing the monthly payment amounts for each payment type
+     * @param {Object} previousMonthBreakdown - The previous month breakdown
+     * 
+     * @return {Object} An object containing the monthly payment breakdown for each payment type and the final payment dates
+     */
+    processPaymentContributions(principalAmount: number, monthlyInterestRate: number, monthCounter: number, paymentLookUp: any, previousMonthPaymentBreakdown: any): any {
+        var calculatedDateInstance = this._addMonthsToDate(new Date(), monthCounter)
+        var paymentBreakdown: any = {
+            date: DateUtil.toISOString(calculatedDateInstance)
+        }
+        var finalPaymentDates: any = {}
 
-            if (previousAdditionalPaymentRemainingBalance === undefined || (previousAdditionalPaymentRemainingBalance !== undefined && previousAdditionalPaymentRemainingBalance > 0)) {
-                if (additionalPaymentRemainingBalance < 0) {
-                    additionalPaymentRemainingBalance = 0
+        Object.keys(previousMonthPaymentBreakdown).forEach((key: string | number) => {
+            if (key !== "date") {
+                let keyString = key.toString()
+                let index = keyString.indexOf("RemainingBalance")
+                let keyName = keyString.substring(0, index) // 'standard' or 'additional0' or 'additional1'
+                if (previousMonthPaymentBreakdown[key] > 0) {
+                    let remainingBalance = this.getRemainingBalanceOnLoan(principalAmount, paymentLookUp[keyName], monthlyInterestRate, monthCounter)
+                    if (remainingBalance < 0) {
+                        remainingBalance = 0
+                        finalPaymentDates[keyName] = calculatedDateInstance
+                    }
+
+                    paymentBreakdown[`${keyName}RemainingBalance`] = remainingBalance
                 }
-                monthBreakdown.push({ name: String(monthCounter), remainingBalance: remainingBalance, additionalPaymentRemainingBalance: additionalPaymentRemainingBalance })
-            } else {
-                monthBreakdown.push({ name: String(monthCounter), remainingBalance: remainingBalance })
             }
+        })
+        return { paymentBreakdown: paymentBreakdown, finalPaymentDates: finalPaymentDates }
+    }
 
-            monthCounter += 1
-            previousAdditionalPaymentRemainingBalance = additionalPaymentRemainingBalance
-        } while (remainingBalance > 0)
-        return monthBreakdown
+    /**
+     * @param {Date} date - The date that we add N number of months to
+     * @param {number} months - The N number of months to add to the date
+     * 
+     * @return {Date} The Date Object that is the result of adding N number of months to the date
+     */
+    _addMonthsToDate(date: Date, months: number): Date {
+        const newDate = new Date(date)
+        newDate.setMonth(newDate.getMonth() + months)
+        return newDate
+    }
+
+    _validatePrincipalAmount(principalAmount: number): void {
+        if (principalAmount <= 0) {
+            throw new Error("Principal Amount must be greater than 0")
+        }
+    }
+
+    _validateMonthlyInterestRate(monthlyInterestRate: number): void {
+        if (monthlyInterestRate <= 0 || monthlyInterestRate >= 1) {
+            throw new Error("Monthly Interest Rate must be a Decimal Amount between 0 and 1")
+        }
+    }
+
+    _validatePaymentLookUp(paymentLookUp: any): void {
+        if (typeof paymentLookUp !== "object") {
+            throw new Error("Payment Look Up is not of type Object")
+        }
+
+        if (Object.keys(paymentLookUp).length === 0) {
+            throw new Error("Payment Look Up can not be empty")
+        } 
+
+        Object.keys(paymentLookUp).forEach((key) => {
+            if (typeof paymentLookUp[key] !== "number") {
+                throw new Error(`Value '${paymentLookUp[key]}' of PaymentLookUp Key '${key}' is not a number`)
+            }
+        })
     }
 
 }
 
 export default Calculator
+

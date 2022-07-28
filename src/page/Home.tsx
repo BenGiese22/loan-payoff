@@ -1,10 +1,12 @@
 import { useState } from "react"
-import { Grid, Stack, Typography, InputAdornment, TextField, Button } from "@mui/material"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts'
+import { Grid, Stack, Typography } from "@mui/material"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import Calculator from "../service/calculator"
 import CustomizedYAxisTick from "../component/CustomizedYAxisTick"
 import InputLoanDetail from "../component/InputLoanDetail"
 import Loan from "../type/Loan"
+import CustomizedXAxisTick from "../component/CustomizedXAxisTick"
+import CustomizedTooltip from "../component/CustomizedTooltip"
 
 const styles = {
     title: {
@@ -15,46 +17,31 @@ const styles = {
     }
 }
 
-// const data = [
-//     {
-//         name: 'Page A',
-//         uv: 4000,
-//         pv: 2400,
-//         amt: 2400,
-//     },
-
-
 const Home = () => {
-
-    // const runCalc = () => {
-    //     let calculator = new Calculator()
-    //     const monthBreakdown = calculator.getBreakdownOfLoanPayment(1000, 300, 0.08)
-    //     return monthBreakdown
-    // }
-
 
     const [data, setData] = useState([] as any)
     const [showGraph, setShowGraph] = useState(false)
     const [showGraphButtonText, setShowGraphButtonText] = useState("Show Graph")
 
-
-    // useEffect(() => {
-    //     const monthBreakdown = runCalc()
-
-    // }, [])
-
-
     const handleInputLoanDetailData = (data: Loan) => {
         console.log(data)
         if (!showGraph) {
             let calculator = new Calculator()
-            const monthBreakdown = calculator.getBreakdownOfLoanPaymentWithAdditionalPayment(
+            const resultObj = calculator.getBreakdownOfLoanPayments(
                 data.loanAmount,
-                data.monthlyPayment,
                 data.interestRate,
-                data.additionalPayment
+                { 
+                    'standard': data.monthlyPayment,
+                    'additional': data.additionalPayment 
+                }
             )
-            setData(monthBreakdown)
+            console.log(resultObj)
+            let monthPaymentBreakdowns = resultObj.monthPaymentBreakdowns
+            let finalPaymentDates = resultObj.finalPaymentDates
+            // console.log(finalPaymentDates)
+
+            // processedMonthPaymentData = processData(monthPaymentBreakdowns)
+            setData(monthPaymentBreakdowns)
             setShowGraphButtonText("Hide Graph")
             setShowGraph(!showGraph)
         } else {
@@ -62,10 +49,6 @@ const Home = () => {
             setShowGraph(!showGraph)
         }
     }
-
-    // const yAxisFormatter = (value: any) => {
-    //     return `${value}`
-    // }
 
     return (
         <Grid container spacing={2} direction="column" alignItems="center" justifyContent="center">
@@ -94,18 +77,20 @@ const Home = () => {
                                         top: 5,
                                         right: 30,
                                         left: 20,
-                                        bottom: 20,
+                                        bottom: 40,
                                     }}
                                 >
                                     <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" >
-                                        <Label value="Month(s)" position="bottom" offset={0} />
+                                    <XAxis dataKey="date" tick={<CustomizedXAxisTick />} >
                                     </XAxis>
                                     <YAxis type={"number"} tick={<CustomizedYAxisTick />} />
-                                    {/* <Tooltip /> */}
+                                    <Tooltip 
+                                        content={<CustomizedTooltip  strokeMonthly={"#8884d8"} strokeAdditional={"#82ca9d"} />} 
+                                        wrapperStyle={{ backgroundColor: "white", borderStyle: "ridge", paddingLeft: "10px", paddingRight: "10px" }}
+                                    />
                                     <Legend verticalAlign="top" height={36} />
-                                    <Line name="Minimum Payments" type="monotone" dataKey="remainingBalance" stroke="#8884d8" dot={false}/>
-                                    <Line name="w/ Additional Payments" type="monotone" dataKey="additionalPaymentRemainingBalance" stroke="#82ca9d" dot={false}/>
+                                    <Line name="standard" type="monotone" dataKey="standardRemainingBalance" stroke="#8884d8" activeDot={{ r: 8 }}/>
+                                    <Line name="additional" type="monotone" dataKey="additionalRemainingBalance" stroke="#82ca9d" activeDot={{ r: 8 }}/>
                                 </LineChart>
                             </ResponsiveContainer>
                         }
