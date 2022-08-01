@@ -7,7 +7,9 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
     const [loanAmount, setLoanAmount] = useState('15000')
     const [monthlyPayment, setMonthlyPayment] = useState('250')
     const [interestRate, setInterestRate] = useState('5')
-    const [additionalPayment, setAdditionalPayment] = useState('500')
+    const [additionalPayments, setAdditionalPayments] = useState([] as any)
+    const [optionalName, setOptionalName] = useState('')
+    // const [additionalPayment, setAdditionalPayment] = useState('500')
 
     /**
      * Upon clicking the button, send the data to the parent component
@@ -17,7 +19,7 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
             loanAmount: Number(loanAmount),
             monthlyPayment: Number(monthlyPayment),
             interestRate: Number(formatInterestRate(interestRate)),
-            additionalPayment: Number(additionalPayment)
+            // additionalPayment: Number(additionalPayment)
         })
     }
 
@@ -54,10 +56,21 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
 
     /** Validates whether or not the ShowGraph/HideGraph Button can be pressed */
     const validateButton = () => {
-        if (loanAmount.length === 0 || monthlyPayment.length === 0 || interestRate.length === 0 || additionalPayment.length === 0) {
-            return false
-        }
+        // if (loanAmount.length === 0 || monthlyPayment.length === 0 || interestRate.length === 0 || additionalPayment.length === 0) {
+            // return false
+        // }
         return true
+    }
+
+    // Additional Payments
+    const addAdditionalPayment = () => {
+        if (additionalPayments.length < 4) {
+            setAdditionalPayments([...additionalPayments, {
+                name: optionalName,
+                amount: Number(500)
+            }])
+            setOptionalName('')
+        }
     }
 
     return (
@@ -101,7 +114,40 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
                 error={!validatePercentage(interestRate)}
                 disabled={showGraph}
             />
-            <TextField
+            <Button onClick={addAdditionalPayment}>Add Payment</Button>
+            <TextField 
+                id="optional-namer"
+                helperText="Optional Name"
+                variant="standard"
+                onChange={(e) => setOptionalName(e.target.value)}
+                value={optionalName}
+            />
+            {
+                additionalPayments.map((payment: any, index: any) => {
+                    return (
+                        <TextField
+                            key={index}
+                            id={`additional-payment-${index}`}
+                            label="Additional Payment"
+                            variant="standard"
+                            placeholder="500"
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                            }}
+                            // onChange={(e) => setAdditionalPayments([...additionalPayments, e.target.value])}
+                            value={payment.amount}
+                        />
+                    )
+                })
+            }
+            <Button variant="contained" color="primary" onClick={handleButtonClick} disabled={!validateButton()}>
+                {showGraphButtonText}
+            </Button>
+        </Stack>
+    )
+}
+/*
+            { <TextField
                 id="additional-payment"
                 label="Additional Payment"
                 variant="standard"
@@ -113,12 +159,7 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
                 value={additionalPayment}
                 error={!validateIntegerAmount(additionalPayment)}
                 disabled={showGraph}
-            />
-            <Button variant="contained" color="primary" onClick={handleButtonClick} disabled={!validateButton()}>
-                {showGraphButtonText}
-            </Button>
-        </Stack>
-    )
-}
+            /> 
+*/
 
 export default InputLoanDetail

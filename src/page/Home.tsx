@@ -17,6 +17,14 @@ const styles = {
     }
 }
 
+/*
+TODO:
+  - Add buttons to allow N number of loans to be added (up to 5)
+  - Pass these values into calculator get breakdown of loan payments
+  - Update lines to handle N number of loans
+  - Update tooltip to handle N number of loans
+*/
+
 const Home = () => {
 
     const [data, setData] = useState([] as any)
