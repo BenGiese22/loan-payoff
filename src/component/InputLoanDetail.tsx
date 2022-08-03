@@ -9,17 +9,22 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
     const [monthlyPayment, setMonthlyPayment] = useState('250')
     const [interestRate, setInterestRate] = useState('5')
     const [additionalPayments, setAdditionalPayments] = useState([] as any)
-    const [optionalName, setOptionalName] = useState('')
-    // const [additionalPayment, setAdditionalPayment] = useState('500')
 
     /**
      * Upon clicking the button, send the data to the parent component
      */
     const handleButtonClick = () => {
+        let paymentObj: any = {
+            standard: Number(monthlyPayment)
+        }
+        additionalPayments.forEach((additionalPayment: any) => {
+            paymentObj[additionalPayment.name] = additionalPayment.amount
+        })
         sendDataToParent({
             loanAmount: Number(loanAmount),
-            monthlyPayment: Number(monthlyPayment),
+            // monthlyPayment: Number(monthlyPayment),
             interestRate: Number(formatInterestRate(interestRate)),
+            payments: paymentObj
             // additionalPayment: Number(additionalPayment)
         })
     }
@@ -67,16 +72,15 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
     const addAdditionalPayment = () => {
         if (additionalPayments.length < 4) {
             setAdditionalPayments([...additionalPayments, {
-                name: optionalName,
+                name: `additional${additionalPayments.length + 1}`,
                 amount: Number(500)
             }])
-            setOptionalName('')
         }
     }
 
     // Update an Additional Payment with new value
     const updateAdditionalPayment = (index: number, event: any) => {
-        console.log(index, event.target.value)
+        console.log(additionalPayments)
         additionalPayments[index].amount = Number(event.target.value)
         setAdditionalPayments([...additionalPayments])
     }
@@ -123,13 +127,6 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
                 disabled={showGraph}
             />
             <Button onClick={addAdditionalPayment}>Add Payment</Button>
-            <TextField 
-                id="optional-namer"
-                helperText="Optional Name"
-                variant="standard"
-                onChange={(e) => setOptionalName(e.target.value)}
-                value={optionalName}
-            />
             {
                 additionalPayments.map((payment: any, index: any) => {
                     return (
@@ -159,21 +156,5 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
         </Stack>
     )
 }
-
-/*
-            { <TextField
-                id="additional-payment"
-                label="Additional Payment"
-                variant="standard"
-                placeholder="500"
-                InputProps={{
-                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                }}
-                onChange={(e) => setAdditionalPayment(e.target.value)}
-                value={additionalPayment}
-                error={!validateIntegerAmount(additionalPayment)}
-                disabled={showGraph}
-            /> 
-*/
 
 export default InputLoanDetail

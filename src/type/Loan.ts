@@ -1,9 +1,8 @@
 
 type Loan = {
     loanAmount: number,
-    monthlyPayment: number,
     interestRate: number,
-    additionalPayment: number
+    payments: any
 }
 
 export default Loan

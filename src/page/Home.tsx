@@ -30,6 +30,7 @@ const Home = () => {
     const [data, setData] = useState([] as any)
     const [showGraph, setShowGraph] = useState(false)
     const [showGraphButtonText, setShowGraphButtonText] = useState("Show Graph")
+    const [payments, setPayments] = useState({} as any)
 
     const handleInputLoanDetailData = (data: Loan) => {
         console.log(data)
@@ -38,10 +39,11 @@ const Home = () => {
             const resultObj = calculator.getBreakdownOfLoanPayments(
                 data.loanAmount,
                 data.interestRate,
-                { 
-                    'standard': data.monthlyPayment,
-                    'additional': data.additionalPayment 
-                }
+                // { 
+                //     'standard': data.monthlyPayment,
+                //     'additional': data.additionalPayment 
+                // }
+                data.payments
             )
             console.log(resultObj)
             let monthPaymentBreakdowns = resultObj.monthPaymentBreakdowns
@@ -50,6 +52,7 @@ const Home = () => {
 
             // processedMonthPaymentData = processData(monthPaymentBreakdowns)
             setData(monthPaymentBreakdowns)
+            setPayments(data.payments)
             setShowGraphButtonText("Hide Graph")
             setShowGraph(!showGraph)
         } else {
@@ -81,7 +84,7 @@ const Home = () => {
                                     width={600}
                                     height={600}
                                     data={data}
-                                    margin={{
+                                    margin={{   
                                         top: 5,
                                         right: 30,
                                         left: 20,
@@ -97,8 +100,13 @@ const Home = () => {
                                         wrapperStyle={{ backgroundColor: "white", borderStyle: "ridge", paddingLeft: "10px", paddingRight: "10px" }}
                                     />
                                     <Legend verticalAlign="top" height={36} />
-                                    <Line name="standard" type="monotone" dataKey="standardRemainingBalance" stroke="#8884d8" activeDot={{ r: 8 }}/>
-                                    <Line name="additional" type="monotone" dataKey="additionalRemainingBalance" stroke="#82ca9d" activeDot={{ r: 8 }}/>
+                                    {
+                                        Object.keys(payments).map((key, index) => {
+                                            return (
+                                                <Line name={key} key={index} type="monotone" dataKey={`${key}RemainingBalance`} stroke={'#8884d8'} activeDot={{ r: 8 }}/>
+                                            )
+                                        })
+                                    }
                                 </LineChart>
                             </ResponsiveContainer>
                         }
@@ -108,5 +116,40 @@ const Home = () => {
         </Grid>
     )
 }
+
+/*
+get first breakdown of payments, see what keys are in them.
+map the keys to N number of lines.
+
+/* 
+<Line name="standard" type="monotone" dataKey="standardRemainingBalance" stroke="#8884d8" activeDot={{ r: 8 }}/>
+<Line name="additional1" type="monotone" dataKey="additional1RemainingBalance" stroke="#82ca9d" activeDot={{ r: 8 }}/>
+
+{
+    additionalPayments.map((payment: any, index: any) => {
+        return (
+            <Stack direction="row" spacing={2} key={index}>
+                <TextField
+                    key={index}
+                    id={`additional-payment-${index}`}
+                    label="Additional Payment"
+                    variant="standard"
+                    placeholder="500"
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                    }}
+                    onChange={(e) => updateAdditionalPayment(index, e)}
+                    value={payment.amount}
+                />
+                <ClearTwoToneIcon onClick={() => {
+                    additionalPayments.splice(index, 1)
+                    setAdditionalPayments([...additionalPayments])
+                }} />
+            </Stack>
+        )
+    }
+    )
+}
+*/
 
 export default Home
