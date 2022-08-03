@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { InputAdornment, Stack, TextField, Button } from "@mui/material"
+import ClearTwoToneIcon from '@mui/icons-material/ClearTwoTone';
 
 
 const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: { showGraph: boolean, showGraphButtonText: string, sendDataToParent: Function}) => {
@@ -73,6 +74,13 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
         }
     }
 
+    // Update an Additional Payment with new value
+    const updateAdditionalPayment = (index: number, event: any) => {
+        console.log(index, event.target.value)
+        additionalPayments[index].amount = Number(event.target.value)
+        setAdditionalPayments([...additionalPayments])
+    }
+
     return (
         <Stack direction="column" spacing={2}>
             <TextField
@@ -125,27 +133,33 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
             {
                 additionalPayments.map((payment: any, index: any) => {
                     return (
-                        <TextField
-                            key={index}
-                            id={`additional-payment-${index}`}
-                            label="Additional Payment"
-                            variant="standard"
-                            placeholder="500"
-                            InputProps={{
-                                startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                            }}
-                            // onChange={(e) => setAdditionalPayments([...additionalPayments, e.target.value])}
-                            value={payment.amount}
-                        />
+                        <Stack direction="row" spacing={2} key={index}>
+                            <TextField
+                                key={index}
+                                id={`additional-payment-${index}`}
+                                label="Additional Payment"
+                                variant="standard"
+                                placeholder="500"
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                                }}
+                                onChange={(e) => updateAdditionalPayment(index, e)}
+                                value={payment.amount}
+                            />
+                            <ClearTwoToneIcon onClick={() => {
+                                additionalPayments.splice(index, 1)
+                                setAdditionalPayments([...additionalPayments])
+                            }} />
+                        </Stack>
                     )
-                })
+                }
+                )
             }
-            <Button variant="contained" color="primary" onClick={handleButtonClick} disabled={!validateButton()}>
-                {showGraphButtonText}
-            </Button>
+            <Button onClick={handleButtonClick} disabled={!validateButton()}>{showGraphButtonText}</Button>
         </Stack>
     )
 }
+
 /*
             { <TextField
                 id="additional-payment"
