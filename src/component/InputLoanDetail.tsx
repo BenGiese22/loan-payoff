@@ -18,14 +18,12 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
             standard: Number(monthlyPayment)
         }
         additionalPayments.forEach((additionalPayment: any) => {
-            paymentObj[additionalPayment.name] = additionalPayment.amount
+            paymentObj[additionalPayment.name] = Number(monthlyPayment) + Number(additionalPayment.amount)
         })
         sendDataToParent({
             loanAmount: Number(loanAmount),
-            // monthlyPayment: Number(monthlyPayment),
             interestRate: Number(formatInterestRate(interestRate)),
             payments: paymentObj
-            // additionalPayment: Number(additionalPayment)
         })
     }
 

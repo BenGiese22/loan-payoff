@@ -1,10 +1,11 @@
 import { useState } from "react"
 import { Grid, Stack, Typography } from "@mui/material"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import Loan from "../type/Loan"
 import Calculator from "../service/calculator"
+import strokeColorUtil from "../util/strokeColorUtil"
 import CustomizedYAxisTick from "../component/CustomizedYAxisTick"
 import InputLoanDetail from "../component/InputLoanDetail"
-import Loan from "../type/Loan"
 import CustomizedXAxisTick from "../component/CustomizedXAxisTick"
 import CustomizedTooltip from "../component/CustomizedTooltip"
 
@@ -96,14 +97,14 @@ const Home = () => {
                                     </XAxis>
                                     <YAxis type={"number"} tick={<CustomizedYAxisTick />} />
                                     <Tooltip 
-                                        content={<CustomizedTooltip  strokeMonthly={"#8884d8"} strokeAdditional={"#82ca9d"} />} 
+                                        content={<CustomizedTooltip />} 
                                         wrapperStyle={{ backgroundColor: "white", borderStyle: "ridge", paddingLeft: "10px", paddingRight: "10px" }}
                                     />
                                     <Legend verticalAlign="top" height={36} />
                                     {
                                         Object.keys(payments).map((key, index) => {
                                             return (
-                                                <Line name={key} key={index} type="monotone" dataKey={`${key}RemainingBalance`} stroke={'#8884d8'} activeDot={{ r: 8 }}/>
+                                                <Line name={key} key={index} type="monotone" dataKey={`${key}RemainingBalance`} stroke={strokeColorUtil.getStrokeColor(index)} activeDot={{ r: 8 }}/>
                                             )
                                         })
                                     }
