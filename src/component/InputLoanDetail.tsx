@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { InputAdornment, Stack, TextField, Button } from "@mui/material"
 import ClearTwoToneIcon from '@mui/icons-material/ClearTwoTone';
+import PaymentDialog from "./PaymentDialog";
 
 
 const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: { showGraph: boolean, showGraphButtonText: string, sendDataToParent: Function}) => {
@@ -9,6 +10,8 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
     const [monthlyPayment, setMonthlyPayment] = useState('250')
     const [interestRate, setInterestRate] = useState('5')
     const [additionalPayments, setAdditionalPayments] = useState([] as any)
+
+    const [paymentDialogState, setPaymentDialogState] = useState(false)
 
     /**
      * Upon clicking the button, send the data to the parent component
@@ -83,6 +86,14 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
         setAdditionalPayments([...additionalPayments])
     }
 
+    const handlePaymentDialogStateChange = () => {
+        setPaymentDialogState(!paymentDialogState)
+    }
+
+    const handleSubmitPayment = (payment: any) => {
+        setAdditionalPayments([...additionalPayments, payment])
+    }
+
     return (
         <Stack direction="column" spacing={2}>
             <TextField
@@ -124,7 +135,8 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
                 error={!validatePercentage(interestRate)}
                 disabled={showGraph}
             />
-            <Button onClick={addAdditionalPayment}>Add Payment</Button>
+            <Button onClick={handlePaymentDialogStateChange}>Add Payment</Button>
+            <PaymentDialog dialogState={paymentDialogState} handleDialogStateChange={handlePaymentDialogStateChange} submitPayment={handleSubmitPayment} />
             {
                 additionalPayments.map((payment: any, index: any) => {
                     return (
