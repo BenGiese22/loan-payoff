@@ -32,27 +32,21 @@ const Home = () => {
     const [showGraph, setShowGraph] = useState(false)
     const [showGraphButtonText, setShowGraphButtonText] = useState("Show Graph")
     const [payments, setPayments] = useState({} as any)
+    const [finalPaymentDates, setFinalPaymentDates] = useState({} as any)
 
     const handleInputLoanDetailData = (data: Loan) => {
-        console.log(data)
         if (!showGraph) {
             let calculator = new Calculator()
             const resultObj = calculator.getBreakdownOfLoanPayments(
                 data.loanAmount,
                 data.interestRate,
-                // { 
-                //     'standard': data.monthlyPayment,
-                //     'additional': data.additionalPayment 
-                // }
                 data.payments
             )
-            console.log(resultObj)
             let monthPaymentBreakdowns = resultObj.monthPaymentBreakdowns
             let finalPaymentDates = resultObj.finalPaymentDates
-            // console.log(finalPaymentDates)
 
-            // processedMonthPaymentData = processData(monthPaymentBreakdowns)
             setData(monthPaymentBreakdowns)
+            setFinalPaymentDates(finalPaymentDates)
             setPayments(data.payments)
             setShowGraphButtonText("Hide Graph")
             setShowGraph(!showGraph)
@@ -112,6 +106,27 @@ const Home = () => {
                             </ResponsiveContainer>
                         }
                     </Grid>
+                    <Grid item xs={12}>
+                        <Typography variant="body1">
+                            {finalPaymentDates.length > 0 &&
+                                <div>
+                                    <Typography variant="h6">
+                                        Final Payment Dates
+                                    </Typography>
+                                    <ul>
+                                        {Object.keys(finalPaymentDates).map((key, index) => {
+                                            return (
+                                                <li key={index}>
+                                                    {key} - {finalPaymentDates[key]}
+                                                </li>
+                                            )
+                                        }
+                                        )}
+                                    </ul>
+                                </div>
+                            }
+                        </Typography>
+                    </Grid>
                 </Stack>
             </Grid>
         </Grid>
@@ -119,6 +134,13 @@ const Home = () => {
 }
 
 /*
+Final Payment Dates
+{
+  additional1: 2022-10-14T23:24:08.339Z,
+  additional0: 2022-11-15T00:24:08.339Z,
+  standard: 2022-12-15T00:24:08.339Z
+}
+
 get first breakdown of payments, see what keys are in them.
 map the keys to N number of lines.
 
