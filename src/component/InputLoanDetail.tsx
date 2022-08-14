@@ -10,7 +10,6 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
     const [monthlyPayment, setMonthlyPayment] = useState('250')
     const [interestRate, setInterestRate] = useState('5')
     const [additionalPayments, setAdditionalPayments] = useState([] as any)
-
     const [paymentDialogState, setPaymentDialogState] = useState(false)
 
     /**
@@ -63,25 +62,21 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
 
     /** Validates whether or not the ShowGraph/HideGraph Button can be pressed */
     const validateButton = () => {
-        // if (loanAmount.length === 0 || monthlyPayment.length === 0 || interestRate.length === 0 || additionalPayment.length === 0) {
-            // return false
-        // }
-        return true
-    }
-
-    // Additional Payments
-    const addAdditionalPayment = () => {
-        if (additionalPayments.length < 4) {
-            setAdditionalPayments([...additionalPayments, {
-                name: `additional${additionalPayments.length + 1}`,
-                amount: Number(500)
-            }])
+        if (loanAmount.length === 0 || monthlyPayment.length === 0 || interestRate.length === 0) {
+            return false
         }
+
+        additionalPayments.forEach((additionalPayment: any) => {
+            if (additionalPayment.amount.length === 0) {
+                return false
+            }
+        })
+
+        return true
     }
 
     // Update an Additional Payment with new value
     const updateAdditionalPayment = (index: number, event: any) => {
-        console.log(additionalPayments)
         additionalPayments[index].amount = Number(event.target.value)
         setAdditionalPayments([...additionalPayments])
     }
