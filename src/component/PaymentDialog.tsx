@@ -1,15 +1,21 @@
 import { useState } from "react"
 import { Button, Dialog, DialogActions, DialogContent, Grid, Input, Typography } from "@mui/material"
 
+// Provide default initialization values for the fields
+const defaultPaymentName = ''
+const defaultPaymentAmount = '100'
+
 const PaymentDialog = ({ dialogState, handleDialogStateChange, submitPayment }: { dialogState: boolean, handleDialogStateChange: any, submitPayment: Function}) => {
 
-    const [paymentName, setPaymentName] = useState('')
-    const [paymentAmount, setPaymentAmount] = useState('100')
+    const [paymentName, setPaymentName] = useState(defaultPaymentName)
+    const [paymentAmount, setPaymentAmount] = useState(defaultPaymentAmount)
 
     const handleSubmit = () => {
         submitPayment({name: paymentName, amount: Number(paymentAmount)})
-        setPaymentName('')
-        setPaymentAmount('100')
+
+        // Reset the fields
+        setPaymentName(defaultPaymentName)
+        setPaymentAmount(defaultPaymentAmount)
     }
 
     return (
