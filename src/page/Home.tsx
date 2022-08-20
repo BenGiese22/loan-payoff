@@ -14,7 +14,7 @@ const styles = {
         paddingTop: "32px"
     },
     inputRow: {
-        width: "50vw"
+        width: "75vw"
     }
 }
 
@@ -44,7 +44,6 @@ const Home = () => {
             )
             let monthPaymentBreakdowns = resultObj.monthPaymentBreakdowns
             let finalPaymentDates = resultObj.finalPaymentDates
-
             setData(monthPaymentBreakdowns)
             setFinalPaymentDates(finalPaymentDates)
             setPayments(data.payments)
@@ -79,7 +78,7 @@ const Home = () => {
                                     width={600}
                                     height={600}
                                     data={data}
-                                    margin={{   
+                                    margin={{
                                         top: 5,
                                         right: 30,
                                         left: 20,
@@ -90,15 +89,15 @@ const Home = () => {
                                     <XAxis dataKey="date" tick={<CustomizedXAxisTick />} >
                                     </XAxis>
                                     <YAxis type={"number"} tick={<CustomizedYAxisTick />} />
-                                    <Tooltip 
-                                        content={<CustomizedTooltip />} 
+                                    <Tooltip
+                                        content={<CustomizedTooltip />}
                                         wrapperStyle={{ backgroundColor: "white", borderStyle: "ridge", paddingLeft: "10px", paddingRight: "10px" }}
                                     />
                                     <Legend verticalAlign="top" height={36} />
                                     {
                                         Object.keys(payments).map((key, index) => {
                                             return (
-                                                <Line name={key} key={index} type="monotone" dataKey={`${key}RemainingBalance`} stroke={strokeColorUtil.getStrokeColor(index)} activeDot={{ r: 8 }}/>
+                                                <Line name={key} key={index} type="monotone" dataKey={`${key}RemainingBalance`} stroke={strokeColorUtil.getStrokeColor(index)} activeDot={{ r: 8 }} />
                                             )
                                         })
                                     }
@@ -106,29 +105,27 @@ const Home = () => {
                             </ResponsiveContainer>
                         }
                     </Grid>
-                    <Grid item xs={12}>
-                        <Typography variant="body1">
-                            {finalPaymentDates.length > 0 &&
-                                <div>
-                                    <Typography variant="h6">
-                                        Final Payment Dates
-                                    </Typography>
-                                    <ul>
-                                        {Object.keys(finalPaymentDates).map((key, index) => {
-                                            return (
-                                                <li key={index}>
-                                                    {key} - {finalPaymentDates[key]}
-                                                </li>
-                                            )
-                                        }
-                                        )}
-                                    </ul>
-                                </div>
-                            }
-                        </Typography>
-                    </Grid>
                 </Stack>
             </Grid>
+            {
+                Object.keys(finalPaymentDates).length > 0 && showGraph &&
+                <Grid item xs={12}>
+                    <Typography variant="h6">
+                        Final Payment Dates
+                    </Typography>
+                    {
+                        Object.keys(finalPaymentDates).map((key, index) => {
+                            return (
+                                <div key={index}>
+                                    <Typography variant="body1" color={strokeColorUtil.getStrokeColor(index)}>
+                                        {key} - {finalPaymentDates[key].toISOString().substring(0, 10)}
+                                    </Typography>
+                                </div>
+                            )
+                        })
+                    }
+                </Grid>
+            }
         </Grid>
     )
 }
