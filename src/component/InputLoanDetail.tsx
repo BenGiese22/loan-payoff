@@ -17,7 +17,7 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
      */
     const handleButtonClick = () => {
         let paymentObj: any = {
-            standard: Number(monthlyPayment)
+            Standard: Number(monthlyPayment)
         }
         additionalPayments.forEach((additionalPayment: any) => {
             paymentObj[additionalPayment.name] = Number(monthlyPayment) + Number(additionalPayment.amount)
@@ -87,6 +87,7 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
 
     const handleSubmitPayment = (payment: any) => {
         setAdditionalPayments([...additionalPayments, payment])
+        setPaymentDialogState(false)
     }
 
     return (
@@ -139,7 +140,7 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
                             <TextField
                                 key={index}
                                 id={`additional-payment-${index}`}
-                                label="Additional Payment"
+                                label={payment.name}
                                 variant="standard"
                                 placeholder="500"
                                 InputProps={{
