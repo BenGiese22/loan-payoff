@@ -43,19 +43,21 @@ class Calculator {
         this._validateMonthlyInterestRate(monthlyInterestRate)
         this._validatePaymentLookUp(paymentLookUp)
 
+        var finalPaymentDates: any = {}
+
         // Create the first Month Breakdown
         let firstMonthBreakdown: any = {
             date: DateUtil.toISOString(new Date())
         }
         Object.keys(paymentLookUp).forEach((key: string | number) => {
             firstMonthBreakdown[`${key}RemainingBalance`] = principalAmount
+            finalPaymentDates[key] = undefined
         })
 
         var monthPaymentBreakdowns = [firstMonthBreakdown]
         var previousMonthBreakdown = firstMonthBreakdown
         let monthCounter = 1
 
-        var finalPaymentDates: any = {}
 
         do {
             let results = this.processPaymentContributions(principalAmount, monthlyInterestRate, monthCounter, paymentLookUp, previousMonthBreakdown)
