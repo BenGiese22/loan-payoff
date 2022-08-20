@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Button, Dialog, DialogActions, DialogContent, Grid, Input, Typography } from "@mui/material"
+import { Button, Dialog, DialogActions, DialogContent, Grid, InputAdornment, TextField, Typography } from "@mui/material"
 
 // Provide default initialization values for the fields
 const defaultPaymentName = ''
@@ -12,7 +12,15 @@ const PaymentDialog = ({ dialogState, handleDialogStateChange, submitPayment }: 
 
     const handleSubmit = () => {
         submitPayment({name: paymentName, amount: Number(paymentAmount)})
+        resetFields()
+    }
 
+    const handleCancel = () => {
+        resetFields()
+        handleDialogStateChange()
+    }
+
+    const resetFields = () => {
         // Reset the fields
         setPaymentName(defaultPaymentName)
         setPaymentAmount(defaultPaymentAmount)
@@ -24,28 +32,35 @@ const PaymentDialog = ({ dialogState, handleDialogStateChange, submitPayment }: 
                 <Typography variant="body1">
                     Create an additional payment?
                 </Typography>
-                <Input
+                <TextField
                     autoFocus
                     margin="dense"
                     id="payment-name"
+                    label="Payment Name"
                     type="text"
                     fullWidth
+                    variant="standard"
                     value={paymentName}
                     onChange={(e) => setPaymentName(e.target.value)}
                 />
-                <Input
+                <TextField
                     autoFocus
                     margin="dense"
                     id="payment-amount"
-                    type="text"
+                    label="Payment Amount"
+                    type="number"
                     fullWidth
-                    value={paymentAmount}
+                    variant="standard"
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                    }}
                     onChange={(e) => setPaymentAmount(e.target.value)}
+                    value={paymentAmount}
                 />
             </DialogContent>
             <DialogActions>
                 <Grid container spacing={1} direction="row" justifyContent="center">
-                    <Button onClick={handleDialogStateChange} style={{ marginRight: '8px' }}>Cancel</Button>
+                    <Button onClick={handleCancel} style={{ marginRight: '8px' }}>Cancel</Button>
                     <Button onClick={handleSubmit} style={{ marginLeft: '8px' }}>Submit</Button> 
                 </Grid>
             </DialogActions>
