@@ -131,7 +131,7 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
                 error={!validatePercentage(interestRate)}
                 disabled={showGraph}
             />
-            <Button onClick={handlePaymentDialogStateChange}>Add Payment</Button>
+            <Button disabled={showGraph} onClick={handlePaymentDialogStateChange}>Add Payment</Button>
             <PaymentDialog dialogState={paymentDialogState} handleDialogStateChange={handlePaymentDialogStateChange} submitPayment={handleSubmitPayment} />
             {
                 additionalPayments.map((payment: any, index: any) => {
@@ -149,10 +149,12 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
                                 onChange={(e) => updateAdditionalPayment(index, e)}
                                 value={payment.amount}
                             />
-                            <ClearTwoToneIcon onClick={() => {
-                                additionalPayments.splice(index, 1)
-                                setAdditionalPayments([...additionalPayments])
-                            }} />
+                            <ClearTwoToneIcon color={!showGraph ? 'primary' : 'disabled'}
+                                onClick={() => {
+                                    additionalPayments.splice(index, 1)
+                                    setAdditionalPayments([...additionalPayments])
+                                }
+                            } />
                         </Stack>
                     )
                 }
