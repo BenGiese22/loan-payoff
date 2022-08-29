@@ -108,10 +108,14 @@ const Home = () => {
                     </Typography>
                     {
                         Object.keys(finalPaymentDates).map((key, index) => {
+                            const finalPaymentDate = finalPaymentDates[key]
+                            const year = finalPaymentDate.getFullYear()
+                            const rawMonth = Number(finalPaymentDate.getMonth()+1)
+                            const month = rawMonth < 10 ? `0${rawMonth}` : rawMonth.toString()
                             return (
                                 <div key={index}>
                                     <Typography variant="body1" color={strokeColorUtil.getStrokeColor(index)}>
-                                        {key} - {finalPaymentDates[key].toISOString().substring(0, 10)}
+                                        {key} - {`${year}/${month}`}
                                     </Typography>
                                 </div>
                             )
