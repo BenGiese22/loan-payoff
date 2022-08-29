@@ -6,7 +6,7 @@ const CustomTooltip = (props: any) => {
     if (active && payload && payload.length) {
         return (
             <div className="custom-tooltip">
-                <p className="date-label">{`Date: ${label}`}</p>
+                <p className="date-label">{`Date: ${label.substring(0,7)}`}</p>
                 {
                     Object.keys(payload).map((key, index) => {
                         return (
