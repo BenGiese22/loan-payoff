@@ -90,6 +90,13 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
         setPaymentDialogState(false)
     }
 
+    const handleDeletePayment = (index: number) => {
+        if (!showGraph) {
+            additionalPayments.splice(index, 1)
+            setAdditionalPayments([...additionalPayments])
+        }
+    }
+
     return (
         <Stack direction="column" spacing={2}>
             <TextField
@@ -148,13 +155,11 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
                                 }}
                                 onChange={(e) => updateAdditionalPayment(index, e)}
                                 value={payment.amount}
+                                disabled={showGraph}
                             />
                             <ClearTwoToneIcon color={!showGraph ? 'primary' : 'disabled'}
-                                onClick={() => {
-                                    additionalPayments.splice(index, 1)
-                                    setAdditionalPayments([...additionalPayments])
-                                }
-                            } />
+                                onClick={() => handleDeletePayment(index)}
+                            />
                         </Stack>
                     )
                 }
