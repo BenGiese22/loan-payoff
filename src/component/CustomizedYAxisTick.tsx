@@ -2,7 +2,7 @@ import MoneyUtil from "../util/moneyUtil"
 
 const CustomizedYAxisTick = (props: any) => {
 
-    const { x , y, payload } = props
+    const { x, y, payload } = props
 
     return (
         <g transform={`translate(${x},${y})`}>

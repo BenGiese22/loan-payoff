@@ -1,5 +1,7 @@
 import { useState } from "react"
 import { InputAdornment, Stack, TextField, Button } from "@mui/material"
+import ClearTwoToneIcon from '@mui/icons-material/ClearTwoTone';
+import PaymentDialog from "./PaymentDialog";
 
 
 const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: { showGraph: boolean, showGraphButtonText: string, sendDataToParent: Function}) => {
@@ -7,17 +9,23 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
     const [loanAmount, setLoanAmount] = useState('15000')
     const [monthlyPayment, setMonthlyPayment] = useState('250')
     const [interestRate, setInterestRate] = useState('5')
-    const [additionalPayment, setAdditionalPayment] = useState('500')
+    const [additionalPayments, setAdditionalPayments] = useState([] as any)
+    const [paymentDialogState, setPaymentDialogState] = useState(false)
 
     /**
      * Upon clicking the button, send the data to the parent component
      */
     const handleButtonClick = () => {
+        let paymentObj: any = {
+            Standard: Number(monthlyPayment)
+        }
+        additionalPayments.forEach((additionalPayment: any) => {
+            paymentObj[additionalPayment.name] = Number(monthlyPayment) + Number(additionalPayment.amount)
+        })
         sendDataToParent({
             loanAmount: Number(loanAmount),
-            monthlyPayment: Number(monthlyPayment),
             interestRate: Number(formatInterestRate(interestRate)),
-            additionalPayment: Number(additionalPayment)
+            payments: paymentObj
         })
     }
 
@@ -54,10 +62,39 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
 
     /** Validates whether or not the ShowGraph/HideGraph Button can be pressed */
     const validateButton = () => {
-        if (loanAmount.length === 0 || monthlyPayment.length === 0 || interestRate.length === 0 || additionalPayment.length === 0) {
+        if (loanAmount.length === 0 || monthlyPayment.length === 0 || interestRate.length === 0) {
             return false
         }
+
+        additionalPayments.forEach((additionalPayment: any) => {
+            if (additionalPayment.amount.length === 0) {
+                return false
+            }
+        })
+
         return true
+    }
+
+    // Update an Additional Payment with new value
+    const updateAdditionalPayment = (index: number, event: any) => {
+        additionalPayments[index].amount = Number(event.target.value)
+        setAdditionalPayments([...additionalPayments])
+    }
+
+    const handlePaymentDialogStateChange = () => {
+        setPaymentDialogState(!paymentDialogState)
+    }
+
+    const handleSubmitPayment = (payment: any) => {
+        setAdditionalPayments([...additionalPayments, payment])
+        setPaymentDialogState(false)
+    }
+
+    const handleDeletePayment = (index: number) => {
+        if (!showGraph) {
+            additionalPayments.splice(index, 1)
+            setAdditionalPayments([...additionalPayments])
+        }
     }
 
     return (
@@ -101,22 +138,34 @@ const InputLoanDetail = ({ showGraph, showGraphButtonText, sendDataToParent }: {
                 error={!validatePercentage(interestRate)}
                 disabled={showGraph}
             />
-            <TextField
-                id="additional-payment"
-                label="Additional Payment"
-                variant="standard"
-                placeholder="500"
-                InputProps={{
-                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                }}
-                onChange={(e) => setAdditionalPayment(e.target.value)}
-                value={additionalPayment}
-                error={!validateIntegerAmount(additionalPayment)}
-                disabled={showGraph}
-            />
-            <Button variant="contained" color="primary" onClick={handleButtonClick} disabled={!validateButton()}>
-                {showGraphButtonText}
-            </Button>
+            <Button disabled={showGraph} onClick={handlePaymentDialogStateChange}>Add Payment</Button>
+            <PaymentDialog dialogState={paymentDialogState} handleDialogStateChange={handlePaymentDialogStateChange} submitPayment={handleSubmitPayment} />
+            {
+                additionalPayments.map((payment: any, index: any) => {
+                    return (
+                        <Stack direction="row" spacing={2} key={index}>
+                            <TextField
+                                key={index}
+                                id={`additional-payment-${index}`}
+                                label={payment.name}
+                                variant="standard"
+                                placeholder="500"
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                                }}
+                                onChange={(e) => updateAdditionalPayment(index, e)}
+                                value={payment.amount}
+                                disabled={showGraph}
+                            />
+                            <ClearTwoToneIcon color={!showGraph ? 'primary' : 'disabled'}
+                                onClick={() => handleDeletePayment(index)}
+                            />
+                        </Stack>
+                    )
+                }
+                )
+            }
+            <Button onClick={handleButtonClick} disabled={!validateButton()}>{showGraphButtonText}</Button>
         </Stack>
     )
 }

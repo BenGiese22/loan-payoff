@@ -1,10 +1,11 @@
 import { useState } from "react"
 import { Grid, Stack, Typography } from "@mui/material"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import Loan from "../type/Loan"
 import Calculator from "../service/calculator"
+import strokeColorUtil from "../util/strokeColorUtil"
 import CustomizedYAxisTick from "../component/CustomizedYAxisTick"
 import InputLoanDetail from "../component/InputLoanDetail"
-import Loan from "../type/Loan"
 import CustomizedXAxisTick from "../component/CustomizedXAxisTick"
 import CustomizedTooltip from "../component/CustomizedTooltip"
 
@@ -13,35 +14,32 @@ const styles = {
         paddingTop: "32px"
     },
     inputRow: {
-        width: "50vw"
+        width: "75vw"
     }
 }
+
 
 const Home = () => {
 
     const [data, setData] = useState([] as any)
     const [showGraph, setShowGraph] = useState(false)
     const [showGraphButtonText, setShowGraphButtonText] = useState("Show Graph")
+    const [payments, setPayments] = useState({} as any)
+    const [finalPaymentDates, setFinalPaymentDates] = useState({} as any)
 
     const handleInputLoanDetailData = (data: Loan) => {
-        console.log(data)
         if (!showGraph) {
             let calculator = new Calculator()
             const resultObj = calculator.getBreakdownOfLoanPayments(
                 data.loanAmount,
                 data.interestRate,
-                { 
-                    'standard': data.monthlyPayment,
-                    'additional': data.additionalPayment 
-                }
+                data.payments
             )
-            console.log(resultObj)
             let monthPaymentBreakdowns = resultObj.monthPaymentBreakdowns
             let finalPaymentDates = resultObj.finalPaymentDates
-            // console.log(finalPaymentDates)
-
-            // processedMonthPaymentData = processData(monthPaymentBreakdowns)
             setData(monthPaymentBreakdowns)
+            setFinalPaymentDates(finalPaymentDates)
+            setPayments(data.payments)
             setShowGraphButtonText("Hide Graph")
             setShowGraph(!showGraph)
         } else {
@@ -84,19 +82,47 @@ const Home = () => {
                                     <XAxis dataKey="date" tick={<CustomizedXAxisTick />} >
                                     </XAxis>
                                     <YAxis type={"number"} tick={<CustomizedYAxisTick />} />
-                                    <Tooltip 
-                                        content={<CustomizedTooltip  strokeMonthly={"#8884d8"} strokeAdditional={"#82ca9d"} />} 
+                                    <Tooltip
+                                        content={<CustomizedTooltip />}
                                         wrapperStyle={{ backgroundColor: "white", borderStyle: "ridge", paddingLeft: "10px", paddingRight: "10px" }}
                                     />
                                     <Legend verticalAlign="top" height={36} />
-                                    <Line name="standard" type="monotone" dataKey="standardRemainingBalance" stroke="#8884d8" activeDot={{ r: 8 }}/>
-                                    <Line name="additional" type="monotone" dataKey="additionalRemainingBalance" stroke="#82ca9d" activeDot={{ r: 8 }}/>
+                                    {
+                                        Object.keys(payments).map((key, index) => {
+                                            return (
+                                                <Line name={key} key={index} type="monotone" dataKey={`${key}RemainingBalance`} stroke={strokeColorUtil.getStrokeColor(index)} activeDot={{ r: 8 }} />
+                                            )
+                                        })
+                                    }
                                 </LineChart>
                             </ResponsiveContainer>
                         }
                     </Grid>
                 </Stack>
             </Grid>
+            {
+                Object.keys(finalPaymentDates).length > 0 && showGraph &&
+                <Grid item xs={12}>
+                    <Typography variant="h6">
+                        Final Payment Dates
+                    </Typography>
+                    {
+                        Object.keys(finalPaymentDates).map((key, index) => {
+                            const finalPaymentDate = finalPaymentDates[key]
+                            const year = finalPaymentDate.getFullYear()
+                            const rawMonth = Number(finalPaymentDate.getMonth()+1)
+                            const month = rawMonth < 10 ? `0${rawMonth}` : rawMonth.toString()
+                            return (
+                                <div key={index}>
+                                    <Typography variant="body1" color={strokeColorUtil.getStrokeColor(index)}>
+                                        {key} - {`${year}/${month}`}
+                                    </Typography>
+                                </div>
+                            )
+                        })
+                    }
+                </Grid>
+            }
         </Grid>
     )
 }
