@@ -8,6 +8,8 @@ import CustomizedYAxisTick from "../component/CustomizedYAxisTick"
 import InputLoanDetail from "../component/InputLoanDetail"
 import CustomizedXAxisTick from "../component/CustomizedXAxisTick"
 import CustomizedTooltip from "../component/CustomizedTooltip"
+import FinalPaymentDates from "../component/FinalPaymentDates"
+import DateUtil from "../util/dateUtil"
 
 const styles = {
     title: {
@@ -36,16 +38,48 @@ const Home = () => {
                 data.payments
             )
             let monthPaymentBreakdowns = resultObj.monthPaymentBreakdowns
-            let finalPaymentDates = resultObj.finalPaymentDates
+            let resultFinalPaymentDates = resultObj.finalPaymentDates
             setData(monthPaymentBreakdowns)
-            setFinalPaymentDates(finalPaymentDates)
+            setFinalPaymentDates(resultFinalPaymentDates)
             setPayments(data.payments)
+
+            console.log(monthPaymentBreakdowns)
+            console.log(resultFinalPaymentDates)
+
+            getMoneySaved(monthPaymentBreakdowns, resultFinalPaymentDates)
+
             setShowGraphButtonText("Hide Graph")
             setShowGraph(!showGraph)
         } else {
             setShowGraphButtonText("Show Graph")
             setShowGraph(!showGraph)
         }
+    }
+
+
+    const getMoneySaved = (monthPaymentBreakdowns: [], finalPaymentDates: any) => {
+        const moneySaved: any = {}
+
+        Object.keys(finalPaymentDates).forEach((key) => {
+            if (key !== 'Standard') {
+
+                let finalPaymentDatesForGivenKey = DateUtil.toISOString(finalPaymentDates[key])
+
+                monthPaymentBreakdowns.forEach((datePaymentsObj: any) => {
+                    /*
+                    { date: "2022/09/25", StandardRemainingBalance: 15000, xtraRemainingBalance: 15000 }
+                    */
+
+                    if (datePaymentsObj.date === finalPaymentDatesForGivenKey) {
+                        moneySaved[key] = datePaymentsObj['StandardRemainingBalance']
+                        return
+                    }
+                })
+
+            }
+        })
+
+        console.log(moneySaved)
     }
 
     return (
@@ -102,26 +136,7 @@ const Home = () => {
             </Grid>
             {
                 Object.keys(finalPaymentDates).length > 0 && showGraph &&
-                <Grid item xs={12}>
-                    <Typography variant="h6">
-                        Final Payment Dates
-                    </Typography>
-                    {
-                        Object.keys(finalPaymentDates).map((key, index) => {
-                            const finalPaymentDate = finalPaymentDates[key]
-                            const year = finalPaymentDate.getFullYear()
-                            const rawMonth = Number(finalPaymentDate.getMonth()+1)
-                            const month = rawMonth < 10 ? `0${rawMonth}` : rawMonth.toString()
-                            return (
-                                <div key={index}>
-                                    <Typography variant="body1" color={strokeColorUtil.getStrokeColor(index)}>
-                                        {key} - {`${year}/${month}`}
-                                    </Typography>
-                                </div>
-                            )
-                        })
-                    }
-                </Grid>
+                <FinalPaymentDates finalPaymentDates={finalPaymentDates} />
             }
         </Grid>
     )

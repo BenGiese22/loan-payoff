@@ -65,7 +65,6 @@ describe("Calculator", () => {
         let monthPaymentBreakdowns = results.monthPaymentBreakdowns
         expect(monthPaymentBreakdowns).toHaveLength(5)
         let finalPaymentDates = results.finalPaymentDates
-        console.log(finalPaymentDates)
         expect(finalPaymentDates).toBeInstanceOf(Object)
         expect(finalPaymentDates['standard']).toBeInstanceOf(Date)
     })
