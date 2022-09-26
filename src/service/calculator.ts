@@ -68,7 +68,11 @@ class Calculator {
             let finalPaymentDate = results.finalPaymentDates
             if (finalPaymentDate !== undefined) {
                 Object.keys(finalPaymentDate).forEach((key: string | number) => {
-                    finalPaymentDates[key] = finalPaymentDate[key]
+                    console.log(key, paymentBreakdown)
+                    finalPaymentDates[key] = {
+                        date: finalPaymentDate[key],
+                        interestSaved: paymentBreakdown['StandardRemainingBalance']
+                    }
                 })
             }
 
@@ -78,6 +82,7 @@ class Calculator {
                 monthCounter += 1
             }
         } while (Object.keys(previousMonthBreakdown).length > 1)
+
         return { monthPaymentBreakdowns: monthPaymentBreakdowns, finalPaymentDates: finalPaymentDates }
     }
 

@@ -56,7 +56,7 @@ describe("Calculator", () => {
 
     test("Get MonthBreakdown of loan - 2 Additional Payments", () => {
         let paymentLookUp = {
-            standard: 300,
+            Standard: 300,
             additional0: 500,
             additional1: 1000
         }
@@ -66,7 +66,14 @@ describe("Calculator", () => {
         expect(monthPaymentBreakdowns).toHaveLength(5)
         let finalPaymentDates = results.finalPaymentDates
         expect(finalPaymentDates).toBeInstanceOf(Object)
-        expect(finalPaymentDates['standard']).toBeInstanceOf(Date)
+        expect(finalPaymentDates['Standard']).toBeInstanceOf(Object)
+
+        let additional0FinalPaymentDate = finalPaymentDates['additional0']
+        expect(additional0FinalPaymentDate.date).toBeInstanceOf(Date)
+        expect(additional0FinalPaymentDate.interestSaved).toBe(114)
+
+        let standardFinalPaymentDate = finalPaymentDates['Standard']
+        expect(standardFinalPaymentDate.interestSaved).toBe(0)
     })
 
     test("Get MonthBreakdown of loan - No Additional Payments", () => {

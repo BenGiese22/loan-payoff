@@ -9,7 +9,6 @@ import InputLoanDetail from "../component/InputLoanDetail"
 import CustomizedXAxisTick from "../component/CustomizedXAxisTick"
 import CustomizedTooltip from "../component/CustomizedTooltip"
 import FinalPaymentDates from "../component/FinalPaymentDates"
-import DateUtil from "../util/dateUtil"
 
 const styles = {
     title: {
@@ -28,7 +27,6 @@ const Home = () => {
     const [showGraphButtonText, setShowGraphButtonText] = useState("Show Graph")
     const [payments, setPayments] = useState({} as any)
     const [finalPaymentDates, setFinalPaymentDates] = useState({} as any)
-    const [moneySaved, setMoneySaved] = useState({} as any)
 
     const handleInputLoanDetailData = (data: Loan) => {
         if (!showGraph) {
@@ -44,9 +42,6 @@ const Home = () => {
             setFinalPaymentDates(resultFinalPaymentDates)
             setPayments(data.payments)
 
-            let resultMoneySaved = getMoneySaved(monthPaymentBreakdowns, resultFinalPaymentDates)
-            setMoneySaved(resultMoneySaved)
-
             setShowGraphButtonText("Hide Graph")
             setShowGraph(!showGraph)
         } else {
@@ -56,34 +51,6 @@ const Home = () => {
     }
 
 
-    const getMoneySaved = (monthPaymentBreakdowns: [], finalPaymentDates: any): object => {
-        const moneySaved: any = {}
-
-        // Iterate over all Keys (All Payments)
-        Object.keys(finalPaymentDates).forEach((key) => {
-            // Update Key toLowerCase for consistency
-            if (key.toLowerCase() !== 'standard') { // Skip Standard as it is the baseline
-
-                // The Final Payment Date for that given Key (Additional Payment) - "2022/09/25" (converted to ISOString)
-                let finalPaymentDatesForGivenKey = DateUtil.toISOString(finalPaymentDates[key])
-
-                // Iterate over Month Payment Breakdowns till finding the matching date. Grab "StandardRemainingBalance".
-                monthPaymentBreakdowns.forEach((datePaymentsObj: any) => {
-                    /*
-                    { date: "2022/09/25", StandardRemainingBalance: 15000, OtherKeyRemainingBalance: 15000 }
-                    */
-
-                    if (datePaymentsObj.date === finalPaymentDatesForGivenKey) {
-                        moneySaved[key] = datePaymentsObj['StandardRemainingBalance']
-                        return
-                    }
-                })
-
-            }
-        })
-
-        return moneySaved
-    }
 
     return (
         <Grid container spacing={2} direction="column" alignItems="center" justifyContent="center">
@@ -139,7 +106,7 @@ const Home = () => {
             </Grid>
             {
                 Object.keys(finalPaymentDates).length > 0 && showGraph &&
-                <FinalPaymentDates finalPaymentDates={finalPaymentDates} moneySaved={moneySaved} />
+                <FinalPaymentDates finalPaymentDates={finalPaymentDates} />
             }
         </Grid>
     )

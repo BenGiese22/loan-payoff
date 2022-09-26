@@ -5,8 +5,7 @@ import DateUtil from "../util/dateUtil"
 
 const FinalPaymentDates = (props: any) => {
 
-    const finalPaymentDates = props.finalPaymentDates
-    const moneySaved = props.moneySaved
+    const finalPaymentDetails = props.finalPaymentDates
 
     return (
         <Grid item xs={12}>
@@ -14,18 +13,20 @@ const FinalPaymentDates = (props: any) => {
                 Final Payment Dates
             </Typography>
             {
-                Object.keys(finalPaymentDates).map((key: any, index) => {
-                    const finalPaymentDate = finalPaymentDates[key]
-                    const year = finalPaymentDate.getFullYear()
-                    const rawMonth = Number(finalPaymentDate.getMonth()+1)
+                Object.keys(finalPaymentDetails).map((key: any, index) => {
+                    const finalPaymentDetail = finalPaymentDetails[key]
+
+                    const dt = finalPaymentDetail.date
+                    const year = dt.getFullYear()
+                    const rawMonth = Number(dt.getMonth()+1)
                     const month = rawMonth < 10 ? `0${rawMonth}` : rawMonth.toString()
 
                     let differenceInMonths = undefined
                     let savedInterest = undefined
 
                     if (key !== "Standard") {
-                        differenceInMonths = DateUtil.getMonthDifference(finalPaymentDates["Standard"], finalPaymentDate)
-                        savedInterest = moneySaved[key]
+                        differenceInMonths = DateUtil.getMonthDifference(finalPaymentDetails["Standard"].date, dt)
+                        savedInterest = finalPaymentDetail.interestSaved
                     }
                     return (
                         <div key={index}>
