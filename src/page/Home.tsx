@@ -15,7 +15,8 @@ const styles = {
         paddingTop: "32px"
     },
     inputRow: {
-        width: "75vw"
+        width: "75vw",
+        marginBottom: "32px"
     }
 }
 

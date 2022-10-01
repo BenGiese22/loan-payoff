@@ -2,14 +2,19 @@ import { Grid, Typography, TableContainer, Table, TableHead, TableRow, TableCell
 import strokeColorUtil from "../util/strokeColorUtil"
 import DateUtil from "../util/dateUtil"
 
+const styles = {
+    gridItem: {
+        marginBottom: "32px"
+    }
+}
 
 const FinalPaymentDetails = (props: any) => {
 
     const finalPaymentDetails = props.finalPaymentDetails
 
     return (
-        <Grid item xs={12}>
-            <Typography variant="h6">
+        <Grid item xs={12} style={styles.gridItem}>
+            <Typography variant="h6" align="center">
                 Final Payment Breakdown
             </Typography>
             <TableContainer component={Paper} sx={{backgroundColor: '#f5f5f5'}}>
@@ -46,11 +51,6 @@ const FinalPaymentDetails = (props: any) => {
                                 const strokeColor = strokeColorUtil.getStrokeColor(index)
 
                                 return (
-                                    // <div key={index}>
-                                    //     <Typography variant="body1" color={strokeColorUtil.getStrokeColor(index)}>
-                                    //         {key} - {`${year}/${month}`} {differenceInMonths !== undefined && ` - (${differenceInMonths} months earlier)`} {savedInterest !== undefined && ` - ($${savedInterest} Interest Saved)`}
-                                    //     </Typography>
-                                    // </div>
                                     <TableRow key={index}>
                                         <TableCell component="th" scope="row" sx={{color: strokeColor}}>
                                             {key}
