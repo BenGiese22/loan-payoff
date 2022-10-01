@@ -8,7 +8,7 @@ import CustomizedYAxisTick from "../component/CustomizedYAxisTick"
 import InputLoanDetail from "../component/InputLoanDetail"
 import CustomizedXAxisTick from "../component/CustomizedXAxisTick"
 import CustomizedTooltip from "../component/CustomizedTooltip"
-import FinalPaymentDates from "../component/FinalPaymentDates"
+import FinalPaymentDetails from "../component/FinalPaymentDetails"
 
 const styles = {
     title: {
@@ -26,7 +26,7 @@ const Home = () => {
     const [showGraph, setShowGraph] = useState(false)
     const [showGraphButtonText, setShowGraphButtonText] = useState("Show Graph")
     const [payments, setPayments] = useState({} as any)
-    const [finalPaymentDates, setFinalPaymentDates] = useState({} as any)
+    const [finalPaymentDetails, setFinalPaymentDetails] = useState({} as any)
 
     const handleInputLoanDetailData = (data: Loan) => {
         if (!showGraph) {
@@ -37,9 +37,9 @@ const Home = () => {
                 data.payments
             )
             let monthPaymentBreakdowns = resultObj.monthPaymentBreakdowns
-            let resultFinalPaymentDates = resultObj.finalPaymentDates
+            let resultFinalPaymentDetails = resultObj.finalPaymentDetails
             setData(monthPaymentBreakdowns)
-            setFinalPaymentDates(resultFinalPaymentDates)
+            setFinalPaymentDetails(resultFinalPaymentDetails)
             setPayments(data.payments)
 
             setShowGraphButtonText("Hide Graph")
@@ -105,8 +105,8 @@ const Home = () => {
                 </Stack>
             </Grid>
             {
-                Object.keys(finalPaymentDates).length > 0 && showGraph &&
-                <FinalPaymentDates finalPaymentDates={finalPaymentDates} />
+                Object.keys(finalPaymentDetails).length > 0 && showGraph &&
+                <FinalPaymentDetails finalPaymentDetails={finalPaymentDetails} />
             }
         </Grid>
     )

@@ -36,14 +36,14 @@ class Calculator {
      * @param {number} monthlyInterestRate - The monthly interest rate
      * @param {Object} paymentLookUp - An object containing the monthly payment amounts for each payment type
      * 
-     * @returns {Object} An object containing the monthly payment breakdown for each payment type and the final payment dates
+     * @returns {Object} An object containing the monthly payment breakdown for each payment type and the final payment details
      */
     getBreakdownOfLoanPayments(principalAmount: number, monthlyInterestRate: number, paymentLookUp: Object): any {
         this._validatePrincipalAmount(principalAmount)
         this._validateMonthlyInterestRate(monthlyInterestRate)
         this._validatePaymentLookUp(paymentLookUp)
 
-        var finalPaymentDates: any = {}
+        var finalPaymentDetails: any = {}
 
         // Create the first Month Breakdown
         let firstMonthBreakdown: any = {
@@ -51,7 +51,7 @@ class Calculator {
         }
         Object.keys(paymentLookUp).forEach((key: string | number) => {
             firstMonthBreakdown[`${key}RemainingBalance`] = principalAmount
-            finalPaymentDates[key] = undefined
+            finalPaymentDetails[key] = undefined
         })
 
         var monthPaymentBreakdowns = [firstMonthBreakdown]
@@ -69,7 +69,7 @@ class Calculator {
             if (finalPaymentDate !== undefined) {
                 Object.keys(finalPaymentDate).forEach((key: string | number) => {
                     console.log(key, paymentBreakdown)
-                    finalPaymentDates[key] = {
+                    finalPaymentDetails[key] = {
                         date: finalPaymentDate[key],
                         interestSaved: paymentBreakdown['StandardRemainingBalance']
                     }
@@ -83,7 +83,7 @@ class Calculator {
             }
         } while (Object.keys(previousMonthBreakdown).length > 1)
 
-        return { monthPaymentBreakdowns: monthPaymentBreakdowns, finalPaymentDates: finalPaymentDates }
+        return { monthPaymentBreakdowns: monthPaymentBreakdowns, finalPaymentDetails: finalPaymentDetails }
     }
 
     /**
